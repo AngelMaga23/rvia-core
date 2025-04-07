@@ -34,8 +34,8 @@ import { ConfigService } from '@nestjs/config';
 import { RviaService } from 'src/rvia/rvia.service';
 import { envs } from 'src/config';
 
-const addonSan = require(envs.rviaactPath);
-const addonAct = require(envs.rviasaPath);
+const addonAct = require(envs.rviaactPath);
+const addonSan = require(envs.rviasaPath);
 
 @Injectable()
 export class ApplicationsService {
@@ -337,6 +337,7 @@ export class ApplicationsService {
 
   async createFiles(createFileDto: CreateFileDto, zipFile: Express.Multer.File, pdfFile: Express.Multer.File | undefined, user: User) {
     // const obj = new addon.CRvia(this.crviaEnvironment);
+    console.log(createFileDto.num_accion)
     const iduProject = createFileDto.num_accion == 1 ? addonAct.coreIA.getIDProject() : addonSan.coreIA.getIDProject();
     const tempExtension = zipFile.originalname.split('.');
 
@@ -589,8 +590,10 @@ export class ApplicationsService {
 
       application.nom_aplicacion = this.encryptionService.decrypt(application.nom_aplicacion);
 
-      return {application, rviaProcess};
-      
+      return {
+        application, 
+        rviaProcess
+      };
     } catch (error) {
       this.handleDBExceptions(error);
     }

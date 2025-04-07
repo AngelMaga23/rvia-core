@@ -99,7 +99,7 @@ export class RviaService {
   // }
 
   private buildWorkerArgs(aplicacion: Application): any[] {
-    const lID = aplicacion.idu_proyecto;
+    const lID = +aplicacion.idu_proyecto;
     const lEmployee = aplicacion.user.num_empleado;
     const ruta_proyecto = this.encryptionService.decrypt(aplicacion.sourcecode.nom_directorio);
     const env = envs.rviaEnv;
@@ -132,7 +132,6 @@ export class RviaService {
 
   async ApplicationInitDocProcess(aplicacion: Application) {
     const args = this.buildWorkerArgs(aplicacion);
-    console.log(args)
     await this.fireAndForgetProcess(args, this.workerService.runInitDocProcess.bind(this.workerService), 'DOC');
     return { isValidProcess: true, messageRVIA: "Proceso IA Iniciado Correctamente" };
   }
