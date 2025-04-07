@@ -269,18 +269,30 @@ export class ApplicationsService {
           }
         }
 
-        if (numAccion != 2) {
-          const scan = new Scan();
-          scan.nom_escaneo = this.encryptionService.encrypt(pdfFileRename);
-          scan.nom_directorio = this.encryptionService.encrypt(join(repoFolderPath, pdfFileRename));
-          scan.application = application;
-          await this.scanRepository.save(scan);
-        }
+        // if (numAccion != 2) {
+        //   const scan = new Scan();
+        //   scan.nom_escaneo = this.encryptionService.encrypt(pdfFileRename);
+        //   scan.nom_directorio = this.encryptionService.encrypt(join(repoFolderPath, pdfFileRename));
+        //   scan.application = application;
+        //   await this.scanRepository.save(scan);
+        // }
 
       }
 
-      if( numAccion != 2 ){
+      if( numAccion === 1 ){
         rviaProcess = await this.rviaService.ApplicationInitActProcess(application);
+      }
+
+
+      if( numAccion === 0 ){
+        if(opcArquitectura[1]){
+          rviaProcess = await this.rviaService.ApplicationInitDocProcess(application);
+        }
+
+        if(opcArquitectura[2]){
+          rviaProcess = await this.rviaService.ApplicationInitDofProcess(application);
+        }
+
       }
 
       application.nom_aplicacion = this.encryptionService.decrypt(application.nom_aplicacion);
@@ -337,7 +349,7 @@ export class ApplicationsService {
 
   async createFiles(createFileDto: CreateFileDto, zipFile: Express.Multer.File, pdfFile: Express.Multer.File | undefined, user: User) {
     // const obj = new addon.CRvia(this.crviaEnvironment);
-    console.log(createFileDto.num_accion)
+ 
     const iduProject = createFileDto.num_accion == 1 ? addonAct.coreIA.getIDProject() : addonSan.coreIA.getIDProject();
     const tempExtension = zipFile.originalname.split('.');
 
@@ -453,12 +465,10 @@ export class ApplicationsService {
       // Procesar el archivo PDF (si existe)
       if (pdfFile) {
         const pdfFileRename = await this.moveAndRenamePdfFile(pdfFile, repoFolderPath, nameApplication, iduProject);
-        console.log("pdfFileRename ",pdfFileRename)
        
         if (isSanitizacion) {
-          console.log("isSanitizacion", isSanitizacion)
+
           dataCheckmarx = await this.checkmarxService.callPython(application.nom_aplicacion, pdfFileRename, application);
-          console.log("dataCheckmarx", dataCheckmarx)
           if (dataCheckmarx.isValid) {
             const scan = new Scan();
             scan.nom_escaneo = this.encryptionService.encrypt(pdfFileRename);
@@ -473,17 +483,28 @@ export class ApplicationsService {
           }
         }
 
-        if (createFileDto.num_accion != 2) {
-          const scan = new Scan();
-          scan.nom_escaneo = this.encryptionService.encrypt(pdfFileRename);
-          scan.nom_directorio = this.encryptionService.encrypt(join(repoFolderPath, pdfFileRename));
-          scan.application = application;
-          await this.scanRepository.save(scan);
-        }
+        // if (createFileDto.num_accion != 2) {
+        //   const scan = new Scan();
+        //   scan.nom_escaneo = this.encryptionService.encrypt(pdfFileRename);
+        //   scan.nom_directorio = this.encryptionService.encrypt(join(repoFolderPath, pdfFileRename));
+        //   scan.application = application;
+        //   await this.scanRepository.save(scan);
+        // }
       }
 
-      if( createFileDto.num_accion != 2 ){
+      if( createFileDto.num_accion === 1 ){
         rviaProcess = await this.rviaService.ApplicationInitActProcess(application);
+      }
+
+      if( createFileDto.num_accion === 0 ){
+        if(createFileDto.opc_arquitectura[1]){
+          rviaProcess = await this.rviaService.ApplicationInitDocProcess(application);
+        }
+
+        if(createFileDto.opc_arquitectura[2]){
+          rviaProcess = await this.rviaService.ApplicationInitDofProcess(application);
+        }
+
       }
 
       application.nom_aplicacion = this.encryptionService.decrypt(application.nom_aplicacion);
