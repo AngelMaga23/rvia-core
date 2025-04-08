@@ -36,6 +36,8 @@ import { envs } from 'src/config';
 
 const addonAct = require(envs.rviaactPath);
 const addonSan = require(envs.rviasaPath);
+const addonDoc = require(envs.rviadocPath);
+const addonDof = require(envs.rviadofPath);
 
 @Injectable()
 export class ApplicationsService {
@@ -350,7 +352,7 @@ export class ApplicationsService {
   async createFiles(createFileDto: CreateFileDto, zipFile: Express.Multer.File, pdfFile: Express.Multer.File | undefined, user: User) {
     // const obj = new addon.CRvia(this.crviaEnvironment);
  
-    const iduProject = createFileDto.num_accion == 1 ? addonAct.coreIA.getIDProjectACT() : addonSan.coreIA.getIDProjectSAN();
+    const iduProject = this.obtenerIDUProject(createFileDto.num_accion, createFileDto.opc_arquitectura);
     const tempExtension = zipFile.originalname.split('.');
 
     const nameApplication = tempExtension.slice(0,-1).join('.').replace(/\s+/g, '-');
@@ -723,6 +725,44 @@ export class ApplicationsService {
       throw new InternalServerErrorException(`Error al mover y renombrar el archivo PDF: ${error.message}`);
     }
   }
+
+  private obtenerIDUProject(
+    num_accion: number,
+    opc_arquitectura: Record<string, boolean>
+  ): string {
+    if (![0, 1, 2, 3].includes(num_accion)) {
+      throw new BadRequestException('num_accion debe ser 0, 1, 2 o 3');
+    }
+  
+    if (num_accion === 1) {
+      return addonAct.coreIA.getIDProjectACT();
+    }
+  
+    if (num_accion === 2) {
+      return addonSan.coreIA.getIDProjectSAN();
+    }
+  
+    if (num_accion === 0) {
+      const tieneOpcionTrue = Object.values(opc_arquitectura).some(v => v === true);
+  
+      if (!tieneOpcionTrue) {
+        throw new BadRequestException('Si num_accion es 0, al menos una opción en opc_arquitectura debe ser true');
+      }
+  
+      if (opc_arquitectura["1"]) {
+        return addonDoc.coreIA.getIDProjectDOC();
+      }
+  
+      if (opc_arquitectura["2"]) {
+        return addonDof.coreIA.getIDProjectDOF();
+      }
+  
+      throw new BadRequestException('num_accion es 0, pero no se seleccionó una arquitectura válida (1 o 2)');
+    }
+  
+    throw new BadRequestException('No se puede determinar iduProject');
+  }
+  
 
   private handleDBExceptions(error: any) {
     if (error.code === '23505') throw new BadRequestException(error.detail);
