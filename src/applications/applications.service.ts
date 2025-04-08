@@ -150,7 +150,7 @@ export class ApplicationsService {
   private async processRepository(repoName: string, repoUserName: string, user: User, file, numAccion: number, opcLenguaje: number, platform: string, opcArquitectura) {
 
     // const obj = new addon.CRvia(this.crviaEnvironment);
-    const iduProject = numAccion == 1 ? addonAct.coreIA.getIDProject() : addonSan.coreIA.getIDProject();
+    const iduProject = numAccion == 1 ? addonAct.coreIA.getIDProjectACT() : addonSan.coreIA.getIDProjectSAN();
 
     const streamPipeline = promisify(pipeline);
     const uniqueTempFolderName = `temp-${uuid()}`;
@@ -350,7 +350,7 @@ export class ApplicationsService {
   async createFiles(createFileDto: CreateFileDto, zipFile: Express.Multer.File, pdfFile: Express.Multer.File | undefined, user: User) {
     // const obj = new addon.CRvia(this.crviaEnvironment);
  
-    const iduProject = createFileDto.num_accion == 1 ? addonAct.coreIA.getIDProject() : addonSan.coreIA.getIDProject();
+    const iduProject = createFileDto.num_accion == 1 ? addonAct.coreIA.getIDProjectACT() : addonSan.coreIA.getIDProjectSAN();
     const tempExtension = zipFile.originalname.split('.');
 
     const nameApplication = tempExtension.slice(0,-1).join('.').replace(/\s+/g, '-');
