@@ -747,7 +747,7 @@ export class ApplicationsService {
       const tieneOpcionTrue = Object.values(opc_arquitectura).some(v => v === true);
   
       if (!tieneOpcionTrue) {
-        throw new BadRequestException('Si num_accion es 0, al menos una opción en opc_arquitectura debe ser true');
+        throw new BadRequestException('Es necesario seleccionar una opción de arquitectura');
       }
   
       if (opc_arquitectura["1"]) {
@@ -758,10 +758,10 @@ export class ApplicationsService {
         return addonDof.coreIA.getIDProjectDOF();
       }
   
-      throw new BadRequestException('num_accion es 0, pero no se seleccionó una arquitectura válida (1 o 2)');
+      throw new BadRequestException('Es necesario seleccionar una opción de arquitectura');
     }
   
-    throw new BadRequestException('No se puede determinar iduProject');
+    throw new BadRequestException('No se pudo obtener el IDU del proyecto');
   }
   
 
