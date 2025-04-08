@@ -152,7 +152,8 @@ export class ApplicationsService {
   private async processRepository(repoName: string, repoUserName: string, user: User, file, numAccion: number, opcLenguaje: number, platform: string, opcArquitectura) {
 
     // const obj = new addon.CRvia(this.crviaEnvironment);
-    const iduProject = numAccion == 1 ? addonAct.coreIA.getIDProjectACT() : addonSan.coreIA.getIDProjectSAN();
+    const iduProject = this.obtenerIDUProject(numAccion, opcArquitectura);
+    // const iduProject = numAccion == 1 ? addonAct.coreIA.getIDProjectACT() : addonSan.coreIA.getIDProjectSAN();
 
     const streamPipeline = promisify(pipeline);
     const uniqueTempFolderName = `temp-${uuid()}`;
