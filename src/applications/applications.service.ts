@@ -43,7 +43,7 @@ const addonDof = require(envs.rviadofPath);
 export class ApplicationsService {
 
   private readonly logger = new Logger('ApplicationsService');
-  private downloadPath = '/sysx/bito/projects';
+  private downloadPath = envs.pathProject;
   private readonly crviaEnvironment: number;
 
   constructor(
