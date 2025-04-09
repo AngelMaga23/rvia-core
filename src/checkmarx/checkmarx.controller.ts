@@ -16,6 +16,7 @@ import { fileFilterPDF } from './helper/fileFilterpdf';
 import { ValidationInterceptor } from '../interceptors/validation-file/validation-file.interceptor';
 import { UnauthorizedResponse, BadRequestResponse, CreateCommonDto, ForbiddenResponse, InternalServerErrorResponse, UpdateCommonDto, NotFoundExceptionResponse } from 'src/common/dto';
 import { Checkmarx } from './entities/checkmarx.entity';
+import { envs } from 'src/config';
 
 
 
@@ -43,7 +44,7 @@ export class CheckmarxController {
     },
     storage: diskStorage({
       destination: (req, file, cb) => {
-        const dir = `/sysx/bito/projects`;
+        const dir = envs.pathProject;
         fs.mkdirSync(dir, { recursive: true });
         cb(null, dir);
       },
@@ -79,7 +80,7 @@ export class CheckmarxController {
     fileFilter: fileFilterPDF,
     storage: diskStorage({
       destination: (req, file, cb) => {
-        const dir = `/sysx/bito/projects`;
+        const dir = envs.pathProject;
         fs.mkdirSync(dir, { recursive: true });
         cb(null, dir);
       },
@@ -113,7 +114,7 @@ export class CheckmarxController {
     fileFilter: fileFilterPDF,
     storage: diskStorage({
       destination: (req, file, cb) => {
-        const dir = `/sysx/bito/projects`;
+        const dir = envs.pathProject;
         fs.mkdirSync(dir, { recursive: true });
         cb(null, dir);
       },

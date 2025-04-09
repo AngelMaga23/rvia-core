@@ -51,9 +51,9 @@ export class CheckmarxService {
       const aplicacion = await this.applicationService.findOne(createCheckmarxDto.idu_aplicacion);
       const nom_aplicacion = this.encryptionService.decrypt(aplicacion.nom_aplicacion);
       const fileName = `checkmarx_${aplicacion.idu_proyecto}_${nom_aplicacion}.csv`;
-      const finalFilePath = join(`/sysx/bito/projects/${aplicacion.idu_proyecto}_${nom_aplicacion}`, fileName);
+      const finalFilePath = join(`${envs.pathProject}/${aplicacion.idu_proyecto}_${nom_aplicacion}`, fileName);
 
-      await rename(`/sysx/bito/projects/${file.filename}`, finalFilePath);  
+      await rename(`${envs.pathProject}/${file.filename}`, finalFilePath);  
  
       const checkmarx = new Checkmarx();
       checkmarx.nom_checkmarx = this.encryptionService.encrypt(fileName);
@@ -166,7 +166,7 @@ export class CheckmarxService {
     const nom_aplicacion = this.encryptionService.decrypt(application.nom_aplicacion);
 
     const fileName = `checkmarx_${application.idu_proyecto}_${nom_aplicacion}.csv`;
-    const finalFilePath = join(`/sysx/bito/projects/${application.idu_proyecto}_${nom_aplicacion}`, fileName);
+    const finalFilePath = join(`${envs.pathProject}/${application.idu_proyecto}_${nom_aplicacion}`, fileName);
     
     try {
       await fsPromises.access(scriptPath, fsPromises.constants.F_OK | fsPromises.constants.R_OK);
@@ -174,7 +174,7 @@ export class CheckmarxService {
       const escapedFileName1 = `"${nom_aplicacion.replace(/"/g, '\\"')}"`;
       const escapedFileName2 = `"${namePdf.replace(/"/g, '\\"')}"`;
   
-      const command = `python3 ${scriptPath} ${escapedFileName1} ${escapedFileName2} ${application.idu_proyecto}`;
+      const command = `python3 ${scriptPath} ${escapedFileName1} ${escapedFileName2} ${application.idu_proyecto} ${envs.pathProject}`;
 
       const { stdout, stderr } = await execPromise(command);
 

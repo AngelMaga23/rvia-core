@@ -20,6 +20,7 @@ import { CreateTestCases } from './dto/create-testcases.dto';
 import { CreateRateProject } from './dto/create-rateproject.dto';
 import { CreateDocumentationCodigo } from './dto/create-documentation-cod.dto';
 import { BadRequestResponse, UnauthorizedResponse, ForbiddenResponse, InternalServerErrorResponse, CreateCommonDto, CreateGitDto, CreateFilesDto, CreateIdDto, CreateDocumentationIdDto, CreateDocumentationCodeIdDto, CreateTestCasesIdDto, CreateRateProjectIdDto, CreateZipIdDto, CreateGitlabDto } from './dto/dto-response'
+import { envs } from 'src/config';
 @ApiTags('Aplicaciones')
 @Controller('applications')
 export class ApplicationsController {
@@ -48,7 +49,7 @@ export class ApplicationsController {
     fileFilter: fileFilterZip,
     storage: diskStorage({
       destination: (req, file, cb) => {
-        const dir = `/sysx/bito/projects`;
+        const dir = envs.pathProject;
         fs.mkdirSync(dir, { recursive: true });
         cb(null, dir);
       },
@@ -75,7 +76,7 @@ export class ApplicationsController {
     fileFilter: fileFilterZip,
     storage: diskStorage({
       destination: (req, file, cb) => {
-        const dir = `/sysx/bito/projects`;
+        const dir = envs.pathProject;
         fs.mkdirSync(dir, { recursive: true });
         cb(null, dir);
       },
@@ -101,7 +102,7 @@ export class ApplicationsController {
     fileFilter: fileFilterZip,
     storage: diskStorage({
       destination: (req, file, cb) => {
-        const dir = `/sysx/bito/projects`;
+        const dir = envs.pathProject;
         fs.mkdirSync(dir, { recursive: true });
         cb(null, dir);
       },

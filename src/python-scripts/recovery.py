@@ -252,7 +252,7 @@ def save_to_csv(info, base_path, file_name):
 
                 # Modificar la ruta en la columna 'File Name' para que contenga el prefijo correcto
                 if key == 'File Name':
-                    row[key] = f"/sysx/bito/projects/{folder_name}/{row[key]}"
+                    row[key] = f"{sys.argv[4]}/{folder_name}/{row[key]}"
             
             dict_writer.writerow(row)
 
@@ -304,7 +304,7 @@ def main():
         nombre_pdf = sys.argv[2]
         id_proyecto = sys.argv[3]
         
-        ruta = f'/sysx/bito/projects/{id_proyecto}_{nombre_aplicacion}'
+        ruta = f'{sys.argv[4]}/{id_proyecto}_{nombre_aplicacion}'
         pdf_path = obtener_ultimo_pdf(ruta, nombre_pdf)
         
         # Generar el nombre del archivo CSV
