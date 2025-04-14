@@ -1,6 +1,6 @@
 import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
-import { Position } from "../../positions/entities/position.entity";
+import { Rol } from "../../rol/entities/rol.entity";
 import { Application } from '../../applications/entities/application.entity';
 import { UsersApplication } from "src/users-applications/entities/users-application.entity";
 
@@ -48,11 +48,11 @@ export class User {
     // updated_at: Date;
 
     @ManyToOne(
-        () => Position, position => position.user,
+        () => Rol, rol => rol.user,
         { eager:true }
     )
     @JoinColumn({ name: 'idu_rol' })
-    position: Position
+    position: Rol;
 
     @OneToMany(
         () => Application, application => application.applicationstatus,

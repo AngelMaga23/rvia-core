@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { PositionsModule } from './positions/positions.module';
+import { RolModule } from './rol/rol.module';
 import { ApplicationsModule } from './applications/applications.module';
 import { AuthModule } from './auth/auth.module';
 import { SourcecodeModule } from './sourcecode/sourcecode.module';
@@ -39,7 +39,7 @@ import { envs } from './config';
     // }),
 
 
-    PositionsModule,
+    RolModule,
     ApplicationsModule,
     AuthModule,
     SourcecodeModule,

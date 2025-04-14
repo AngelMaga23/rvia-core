@@ -2,29 +2,29 @@ import { BadRequestException, Injectable, InternalServerErrorException, Logger, 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { CreatePositionDto } from './dto/create-position.dto';
-import { UpdatePositionDto } from './dto/update-position.dto';
-import { Position } from './entities/position.entity';
+import { CreateRolDto } from './dto/create-rol.dto';
+import { UpdateRolDto } from './dto/update-rol.dto';
+import { Rol } from './entities/rol.entity';
 import { CommonService } from 'src/common/common.service';
 
 @Injectable()
-export class PositionsService {
+export class RolService {
 
-  private readonly logger = new Logger('PositionsService');
+  private readonly logger = new Logger('RolService');
 
   constructor(
-    @InjectRepository(Position)
-    private readonly positionRepository: Repository<Position>,
+    @InjectRepository(Rol)
+    private readonly rolRepository: Repository<Rol>,
     private readonly encryptionService: CommonService
   ){}
 
-  async create(createPositionDto: CreatePositionDto) {
+  async create(createPositionDto: CreateRolDto) {
     
      try {
         
         createPositionDto.nom_rol = this.encryptionService.encrypt(createPositionDto.nom_rol);
-        const position = this.positionRepository.create(createPositionDto);
-        await this.positionRepository.save(position);
+        const position = this.rolRepository.create(createPositionDto);
+        await this.rolRepository.save(position);
 
         return position;
 
@@ -38,7 +38,7 @@ export class PositionsService {
   async findAll() {
 
     try {
-      const puestos = await this.positionRepository.find();
+      const puestos = await this.rolRepository.find();
 
       const decryptedStatuses = puestos.map(puesto => {
         puesto.nom_rol = this.encryptionService.decrypt(puesto.nom_rol);
@@ -55,7 +55,7 @@ export class PositionsService {
 
   async findOne(id: number) {
 
-    const position = await this.positionRepository.findOneBy({ idu_rol:id });
+    const position = await this.rolRepository.findOneBy({ idu_rol:id });
 
     if( !position )
       throw new NotFoundException(`Rol con ${id} no encontrado `);
@@ -63,9 +63,9 @@ export class PositionsService {
     return position; 
   }
 
-  async update(id: number, updatePositionDto: UpdatePositionDto) {
+  async update(id: number, updatePositionDto: UpdateRolDto) {
 
-    const position = await this.positionRepository.preload({
+    const position = await this.rolRepository.preload({
       idu_rol: id,
       ...updatePositionDto
     });
@@ -74,7 +74,7 @@ export class PositionsService {
 
     try {
       position.nom_rol = this.encryptionService.encrypt(position.nom_rol);
-      await this.positionRepository.save( position );
+      await this.rolRepository.save( position );
       return position;
 
     } catch (error) {
@@ -87,7 +87,7 @@ export class PositionsService {
   async remove(id: number) {
 
     const position = await this.findOne( id );
-    await this.positionRepository.remove( position );
+    await this.rolRepository.remove( position );
 
     // return `This action removes a #${id} position`;
   }

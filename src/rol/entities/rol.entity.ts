@@ -4,7 +4,7 @@ import { User } from "../../auth/entities/user.entity";
 
 
 @Entity('cat_roles')
-export class Position {
+export class Rol {
 
     @ApiProperty({ 
         example: 1,

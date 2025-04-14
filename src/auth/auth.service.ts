@@ -6,7 +6,7 @@ import * as bcrypt from 'bcrypt';
 
 import { CreateUserDto, LoginUserDto, UpdateUserDto } from './dto';
 import { User } from './entities/user.entity';
-import { PositionsService } from '../positions/positions.service';
+import { RolService } from '../rol/rol.service';
 import { JwtPayload } from './interfaces';
 import { SeguimientoService } from 'src/seguimiento/seguimiento.service';
 import { CreateSeguimientoDto } from 'src/seguimiento/dto/create-seguimiento.dto';
@@ -20,7 +20,7 @@ export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly positionService: PositionsService,
+    private readonly rolService: RolService,
     private readonly jwtService: JwtService,
     private readonly seguimientoService: SeguimientoService,
     private readonly encryptionService: CommonService
@@ -75,7 +75,7 @@ export class AuthService {
 
       const { nom_contrasena,nom_correo, nom_usuario, ...userData } = createUserDto;
       
-      const position = await this.positionService.findOne( createUserDto.idu_rol );
+      const position = await this.rolService.findOne( createUserDto.idu_rol );
 
       if( await this.checkEmailExist( nom_correo ) )
         throw new BadRequestException('El correo ya existe');
@@ -186,7 +186,7 @@ export class AuthService {
       }
   
       if (updateUserDto.idu_rol) {
-        const position = await this.positionService.findOne( updateUserDto.idu_rol );
+        const position = await this.rolService.findOne( updateUserDto.idu_rol );
         if( !position ) throw new NotFoundException(`Rol con ${updateUserDto.idu_rol} no encontrado `);
         user.position = position;
       }
