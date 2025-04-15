@@ -17,8 +17,18 @@ export class PositionService {
     return 'This action adds a new position';
   }
 
-  findAll() {
-    return `This action returns all position`;
+  async findAll() {
+    try {
+
+      const puestos = await this.puestosRepository.find();
+
+
+      return puestos;
+
+    } catch (error) {
+      this.handleDBExceptions( error );
+     
+    }
   }
 
   async findOne(id: number) {
