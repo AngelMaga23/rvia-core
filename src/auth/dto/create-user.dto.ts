@@ -60,14 +60,14 @@ export class CreateUserDto {
 
     @IsNumber()
     @Transform(({ value }) => parseInt(value, 10))
-    idu_puesto: number;
+    num_puesto: number;
 
     @IsNumber()
     @Transform(({ value }) => parseInt(value, 10))
     idu_aplicacion: number;
 
     @IsNumber()
-    @Transform(({ value }) => parseInt(value, 6))
+    @Transform(({ value }) => parseInt(value, 10))
     num_centro: number;
 
     @IsNumber()

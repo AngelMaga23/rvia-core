@@ -42,7 +42,7 @@ export class User {
     opc_es_activo: boolean;
 
     @Column({ type: 'int' })
-    idu_puesto: number;
+    num_puesto: number;
 
     @Column({ type: 'int' })
     idu_aplicacion: number;
