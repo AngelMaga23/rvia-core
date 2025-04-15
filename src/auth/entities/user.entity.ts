@@ -41,6 +41,18 @@ export class User {
     })
     opc_es_activo: boolean;
 
+    @Column({ type: 'int' })
+    idu_puesto: number;
+
+    @Column({ type: 'int' })
+    idu_aplicacion: number;
+  
+    @Column({ type: 'int' })
+    num_centro: number;
+  
+    @Column({ type: 'varchar', length: 10 })
+    num_encargado: string;
+
     // @CreateDateColumn({ type: 'timestamp' })
     // created_at: Date;
   
