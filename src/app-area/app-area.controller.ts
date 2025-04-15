@@ -3,7 +3,7 @@ import { AppAreaService } from './app-area.service';
 import { CreateAppAreaDto } from './dto/create-app-area.dto';
 import { UpdateAppAreaDto } from './dto/update-app-area.dto';
 
-@Controller('app-area')
+@Controller('apps-area')
 export class AppAreaController {
   constructor(private readonly appAreaService: AppAreaService) {}
 
