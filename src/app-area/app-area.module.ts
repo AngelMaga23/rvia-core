@@ -8,5 +8,6 @@ import { AppArea } from './entities/app-area.entity';
   controllers: [AppAreaController],
   providers: [AppAreaService],
   imports: [ TypeOrmModule.forFeature([ AppArea ]) ],
+  exports: [ AppAreaService ],
 })
 export class AppAreaModule {}

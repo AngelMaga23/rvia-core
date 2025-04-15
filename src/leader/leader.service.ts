@@ -6,6 +6,8 @@ import { Leader } from './entities/leader.entity';
 import { Repository } from 'typeorm';
 import { PositionService } from 'src/position/position.service';
 import { Position } from 'src/position/entities/position.entity';
+import { CentrosService } from 'src/centros/centros.service';
+import { AppAreaService } from 'src/app-area/app-area.service';
 
 @Injectable()
 export class LeaderService {
@@ -16,6 +18,8 @@ export class LeaderService {
     @InjectRepository(Leader)
     private readonly leaderRepository: Repository<Leader>,
     private readonly puestosService: PositionService,
+    private readonly centrosService: CentrosService,
+    private readonly appAreaService: AppAreaService,
   ){} 
 
   async create(createLeaderDto: CreateLeaderDto) {
@@ -52,12 +56,21 @@ export class LeaderService {
 
     const puestoSuperior = await this.puestosService.findByLevel(nivelSuperior);
 
+    const centros = await this.centrosService.findAll();
+    const aplicaciones = await this.appAreaService.findAll();
+
     const encargados = await this.leaderRepository.find({
       where: { num_puesto: puestoSuperior.idu_puesto },
       select: ['idu_encargado', 'num_empleado', 'nom_empleado']
     });
 
-    return encargados;
+    return {  
+
+      aplicaciones: aplicaciones,
+      centros: centros,
+      superiores: encargados
+
+    };
   }
 
   async update(id: number, updateLeaderDto: UpdateLeaderDto) {
