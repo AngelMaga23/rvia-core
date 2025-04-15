@@ -19,7 +19,7 @@ export class LeaderController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.leaderService.findOne(+id);
+    return this.leaderService.findByLevel(+id);
   }
 
   @Patch(':id')
