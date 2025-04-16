@@ -49,29 +49,39 @@ export class LeaderService {
   }
 
   async findByLevel(id: number) {
-
-    const puestoSelect = await this.puestosService.findOne(id);
-
-    const nivelSuperior = (puestoSelect as Position).num_puesto - 1;
-
-    const puestoSuperior = await this.puestosService.findByLevel(nivelSuperior);
-
-    const centros = await this.centrosService.findAll();
-    const aplicaciones = await this.appAreaService.findAll();
-
-    const encargados = await this.leaderRepository.find({
-      where: { num_puesto: puestoSuperior.idu_puesto },
-      select: ['idu_encargado', 'num_empleado', 'nom_empleado']
-    });
-
-    return {  
-
-      aplicaciones: aplicaciones,
-      centros: centros,
+    const puesto = await this.puestosService.findOne(id);
+  
+    if (!puesto) {
+      throw new Error(`Puesto con ID ${id} no encontrado`);
+    }
+  
+    const nivel = (puesto as Position).num_puesto;
+    let encargados = [];
+  
+    if (nivel !== 1) {
+      const nivelSuperior = nivel - 1;
+      const puestoSuperior = await this.puestosService.findByLevel(nivelSuperior);
+  
+      if (puestoSuperior) {
+        encargados = await this.leaderRepository.find({
+          where: { num_puesto: puestoSuperior.idu_puesto },
+          select: ['idu_encargado', 'num_empleado', 'nom_empleado']
+        });
+      }
+    }
+  
+    const [centros, aplicaciones] = await Promise.all([
+      this.centrosService.findAll(),
+      this.appAreaService.findAll()
+    ]);
+  
+    return {
+      aplicaciones,
+      centros,
       superiores: encargados
-
     };
   }
+  
 
   async update(id: number, updateLeaderDto: UpdateLeaderDto) {
 
