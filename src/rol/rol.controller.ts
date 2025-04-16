@@ -14,7 +14,7 @@ import { UpdateRolDto } from './dto/update-rol.dto';
 
 
 @ApiTags('Roles')
-@Controller('positions')
+@Controller('rol')
 @Auth( ValidRoles.admin )
 export class PositionsController {
   constructor(private readonly rolService: RolService) {}
