@@ -78,7 +78,10 @@ COPY . .
 RUN npm run build
 
 # Crear el directorio y mover el archivo rvia.node
-RUN mkdir -p /sysx/progs/rvia/bin && mv /app/rvia.node /sysx/progs/rvia/bin/rvia.node
+RUN mkdir -p /sysx && \
+    cp -r /app/bito /sysx/ && \
+    cp -r /app/dev /sysx/ && \
+    cp -r /app/progs /sysx/
 
 RUN chmod +x /app/bito_setup.sh
 
