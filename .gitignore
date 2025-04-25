@@ -3,7 +3,10 @@
 /node_modules
 /build
 /static
-
+/dev/rvia/cnf/*
+/progs/rvia/cnf/*
+/progs/AI-Automation/*
+!/progs/AI-Automation/.gitkeep
 postgres/
 
 # Logs

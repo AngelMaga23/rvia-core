@@ -17,6 +17,10 @@ import { LanguagesModule } from './languages/languages.module';
 import { CheckmarxModule } from './checkmarx/checkmarx.module';
 import { CostModule } from './cost/cost.module';
 import { envs } from './config';
+import { LeaderModule } from './leader/leader.module';
+import { PositionModule } from './position/position.module';
+import { AppAreaModule } from './app-area/app-area.module';
+import { CentrosModule } from './centros/centros.module';
 
 @Module({
   imports: [
@@ -52,7 +56,11 @@ import { envs } from './config';
     // ConfigurationModule,
     LanguagesModule,
     CheckmarxModule,
-    CostModule
+    CostModule,
+    LeaderModule,
+    PositionModule,
+    AppAreaModule,
+    CentrosModule
     
   ],
   controllers: [],

@@ -58,6 +58,25 @@ export class CreateUserDto {
     @Transform(({ value }) => parseInt(value, 10))
     idu_rol: number;
 
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value, 10))
+    num_puesto: number;
+
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value, 10))
+    idu_aplicacion: number;
+
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value, 10))
+    num_centro: number;
+
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value, 10), { toClassOnly: true })
+    @IsOptional()
+    // @Validate(IsExactLength)
+    // @Validate(IsInRange)
+    num_encargado: string;
+
     @IsOptional()
     fec_creacion?: Date;
   
