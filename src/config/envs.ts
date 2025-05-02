@@ -18,7 +18,7 @@ interface EnvVars {
 
   RVIA_ENVIRONMENT: number;
 
-  RVIASA_PATH: string;
+  RVIASAN_PATH: string;
   RVIAACT_PATH: string;
   RVIADOC_PATH: string;
   RVIADOF_PATH: string;
@@ -43,7 +43,7 @@ const envsSchema = joi.object({
 
   RVIA_ENVIRONMENT: joi.number().required(),
 
-  RVIASA_PATH: joi.string().required(),
+  RVIASAN_PATH: joi.string().required(),
   RVIAACT_PATH: joi.string().required(),
   RVIADOC_PATH: joi.string().required(),
   RVIADOF_PATH: joi.string().required(),
@@ -79,7 +79,7 @@ export const envs = {
   jwtSecret: envVars.JWT_SECRET,
   rviaEnv: envVars.RVIA_ENVIRONMENT,
 
-  rviasaPath: envVars.RVIASA_PATH,
+  rviasaPath: envVars.RVIASAN_PATH,
   rviaactPath: envVars.RVIAACT_PATH,
   rviadocPath: envVars.RVIADOC_PATH ,
   rviadofPath: envVars.RVIADOF_PATH,

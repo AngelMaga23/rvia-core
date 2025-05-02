@@ -7,6 +7,17 @@
 /progs/rvia/cnf/*
 /progs/AI-Automation/*
 !/progs/AI-Automation/.gitkeep
+/dev/rvia/bin/*
+!/dev/rvia/bin/.gitkeep
+!/dev/rvia/cnf/.gitkeep
+!/dev/rvia/cnf/cnf.ini.template
+!/dev/rvia/cnf/dev.ini.template
+
+!/progs/rvia/bin/.gitkeep
+!/progs/rvia/cnf/.gitkeep
+!/progs/rvia/cnf/cnf.ini.template
+!/progs/rvia/cnf/dev.ini.template
+
 postgres/
 
 # Logs
