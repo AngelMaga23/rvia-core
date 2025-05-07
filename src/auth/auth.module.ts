@@ -12,6 +12,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { SeguimientoModule } from 'src/seguimiento/seguimiento.module';
 import { CommonModule } from 'src/common/common.module';
 import { envs } from 'src/config';
+import { LeaderModule } from 'src/leader/leader.module';
 
 @Module({
   controllers: [AuthController],
@@ -20,6 +21,7 @@ import { envs } from 'src/config';
     ConfigModule,
     SeguimientoModule,
     CommonModule,
+    LeaderModule,
 
     TypeOrmModule.forFeature([ User ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),

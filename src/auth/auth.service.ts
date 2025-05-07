@@ -11,6 +11,7 @@ import { JwtPayload } from './interfaces';
 import { SeguimientoService } from 'src/seguimiento/seguimiento.service';
 import { CreateSeguimientoDto } from 'src/seguimiento/dto/create-seguimiento.dto';
 import { CommonService } from 'src/common/common.service';
+import { LeaderService } from 'src/leader/leader.service';
 
 
 
@@ -23,7 +24,8 @@ export class AuthService {
     private readonly rolService: RolService,
     private readonly jwtService: JwtService,
     private readonly seguimientoService: SeguimientoService,
-    private readonly encryptionService: CommonService
+    private readonly encryptionService: CommonService,
+    private readonly encargadoService: LeaderService
   ) {}
 
   async findAll() {
@@ -43,31 +45,57 @@ export class AuthService {
   async findAllActiveUsers(){
 
     const usuarios = await this.userRepository.find({ where: { opc_es_activo: true }});
-
-    const usuariosDesencriptados = usuarios.map(usuario => ({
-      ...usuario,
-      nom_correo: this.encryptionService.decrypt(usuario.nom_correo),
-      nom_usuario: this.encryptionService.decrypt(usuario.nom_usuario),
-      position: {
-        ...usuario.position,
-        nom_rol: this.encryptionService.decrypt(usuario.position.nom_rol),
-      }
-    }));
+  
+    const usuariosDesencriptados = await Promise.all(
+      usuarios.map(async (usuario) => {
+        const correo = this.encryptionService.decrypt(usuario.nom_correo);
+        const nombre = this.encryptionService.decrypt(usuario.nom_usuario);
+        const rol = this.encryptionService.decrypt(usuario.position.nom_rol);
+        const encargado = await this.encargadoService.findOne(usuario.num_encargado);
+    
+        return {
+          ...usuario,
+          nom_correo: correo,
+          nom_usuario: nombre,
+          position: {
+            ...usuario.position,
+            nom_rol: rol,
+          },
+          encargado,
+        };
+      })
+    );
 
     return usuariosDesencriptados;
   }
 
   async findUserById(id: string) {
-    const user = await this.userRepository.findOneBy({ idu_usuario:id });
-    if( !user )
-      throw new NotFoundException(`Usuario con ${id} no encontrado `);
-
-    user.nom_usuario = this.encryptionService.decrypt(user.nom_usuario);
-    user.nom_correo = this.encryptionService.decrypt(user.nom_correo);
-    user.position.nom_rol = this.encryptionService.decrypt(user.position.nom_rol);
-    
-    return user;
+    const user = await this.userRepository.findOne({
+      where: { idu_usuario: id },
+      relations: ['position'],
+    });
+  
+    if (!user) {
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+    }
+  
+    const correo = this.encryptionService.decrypt(user.nom_correo);
+    const nombre = this.encryptionService.decrypt(user.nom_usuario);
+    const rol = this.encryptionService.decrypt(user.position.nom_rol);
+    const encargado = await this.encargadoService.findOne(user.num_encargado);
+  
+    return {
+      ...user,
+      nom_correo: correo,
+      nom_usuario: nombre,
+      position: {
+        ...user.position,
+        nom_rol: rol,
+      },
+      encargado,
+    };
   }
+  
 
   async create( createUserDto: CreateUserDto) {
     

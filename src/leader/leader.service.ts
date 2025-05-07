@@ -48,6 +48,18 @@ export class LeaderService {
     }
   }
 
+  async findOne(id: string) {
+    try {
+
+      const encargado = await this.leaderRepository.findOneBy({ num_empleado: +id });
+
+      return encargado;
+
+    } catch (error) {
+      this.handleDBExceptions( error );
+    }
+  }
+
   async findByLevel(id: number) {
     const puesto = await this.puestosService.findOne(id);
   

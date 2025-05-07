@@ -11,5 +11,6 @@ import { AppAreaModule } from 'src/app-area/app-area.module';
   controllers: [LeaderController],
   providers: [LeaderService],
   imports: [TypeOrmModule.forFeature([ Leader ]), PositionModule, CentrosModule, AppAreaModule],
+  exports: [LeaderService],
 })
 export class LeaderModule {}
