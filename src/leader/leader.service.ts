@@ -94,7 +94,35 @@ export class LeaderService {
     };
   }
   
+  async findByPosition(id: number) {
+    try {
 
+      const puesto = await this.puestosService.findOne(id);
+  
+  
+      if (!puesto) {
+        throw new Error(`Puesto con ID ${id} no encontrado`);
+      }
+
+      const nivel = (puesto as Position).num_puesto;
+      let encargados = [];
+      if (nivel !== 1) {
+        const nivelSuperior = nivel - 1;
+        const puestoSuperior = await this.puestosService.findByLevel(nivelSuperior);
+    
+        if (puestoSuperior) {
+          encargados = await this.leaderRepository.find({
+            where: { num_puesto: puestoSuperior.idu_puesto },
+            // select: ['idu_encargado', 'num_empleado', 'nom_empleado']
+          });
+        }
+      }
+      return {encargados};
+
+    } catch (error) {
+      this.handleDBExceptions( error );
+    }
+  }
   async update(id: number, updateLeaderDto: UpdateLeaderDto) {
 
     const encargado = await this.leaderRepository.preload({
