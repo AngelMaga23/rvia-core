@@ -12,6 +12,9 @@ import { SeguimientoService } from 'src/seguimiento/seguimiento.service';
 import { CreateSeguimientoDto } from 'src/seguimiento/dto/create-seguimiento.dto';
 import { CommonService } from 'src/common/common.service';
 import { LeaderService } from 'src/leader/leader.service';
+import { CentrosService } from 'src/centros/centros.service';
+import { PositionService } from 'src/position/position.service';
+import { AppAreaService } from 'src/app-area/app-area.service';
 
 
 
@@ -25,7 +28,10 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly seguimientoService: SeguimientoService,
     private readonly encryptionService: CommonService,
-    private readonly encargadoService: LeaderService
+    private readonly encargadoService: LeaderService,
+    private readonly centroService: CentrosService,
+    private readonly puestoService: PositionService,
+    private readonly appService: AppAreaService,
   ) {}
 
   async findAll() {
@@ -79,21 +85,23 @@ export class AuthService {
       throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
     }
   
-    const correo = this.encryptionService.decrypt(user.nom_correo);
-    const nombre = this.encryptionService.decrypt(user.nom_usuario);
-    const rol = this.encryptionService.decrypt(user.position.nom_rol);
-    const encargado = await this.encargadoService.findOne(user.num_encargado);
-  
-    return {
-      ...user,
-      nom_correo: correo,
-      nom_usuario: nombre,
+    const dataUser = {
+      idu_usuario: user.idu_usuario,
+      nom_empleado: user.num_empleado,
+      nom_correo: this.encryptionService.decrypt(user.nom_correo),
+      nom_usuario: this.encryptionService.decrypt(user.nom_usuario),
+      opc_es_activo: user.opc_es_activo,
       position: {
         ...user.position,
-        nom_rol: rol,
+        nom_rol: this.encryptionService.decrypt(user.position.nom_rol),
       },
-      encargado,
+      aplicacion: await this.appService.findOne(user.idu_aplicacion),
+      centro: await this.centroService.findOne(user.num_centro),
+      encargado: await this.encargadoService.findOne(user.num_encargado),
+      puesto: await this.puestoService.findOne(user.num_puesto),
     };
+  
+    return dataUser;
   }
   
 
@@ -134,32 +142,70 @@ export class AuthService {
 
   }
 
-  async login( loginUserDto: LoginUserDto ) {
-
+  async login(loginUserDto: LoginUserDto) {
     const { nom_contrasena, num_empleado } = loginUserDto;
-
+  
     const user = await this.userRepository.findOne({
       where: { num_empleado },
-      select: { num_empleado:true, nom_correo: true, nom_contrasena: true, idu_usuario: true, nom_usuario:true },
-      relations: ['position']
+      select: {
+        num_empleado: true,
+        nom_correo: true,
+        nom_contrasena: true,
+        idu_usuario: true,
+        nom_usuario: true,
+        idu_aplicacion: true,
+        num_centro: true,
+        num_encargado: true,
+        num_puesto: true,
+      },
+      relations: ['position'],
     });
-
-    if ( !user ) 
+  
+    if (!user) {
       throw new UnauthorizedException('Número de empleado no válido');
-      
-    if ( !bcrypt.compareSync( nom_contrasena, user.nom_contrasena ) )
+    }
+  
+    const isValidPassword = bcrypt.compareSync(nom_contrasena, user.nom_contrasena);
+    if (!isValidPassword) {
       throw new UnauthorizedException('Contraseña no válida');
+    }
+  
+    const decryptedCorreo = this.encryptionService.decrypt(user.nom_correo);
+    const decryptedUsuario = this.encryptionService.decrypt(user.nom_usuario);
+    const decryptedRol = this.encryptionService.decrypt(user.position.nom_rol);
+  
 
+    const aplicacion = await this.appService.findOne(user.idu_aplicacion);
+    const centro = await this.centroService.findOne(user.num_centro);
+    const encargado = await this.encargadoService.findOne(user.num_encargado);
+    const puesto = await this.puestoService.findOne(user.num_puesto);
+  
 
-    const { nom_contrasena: _, ...userWithoutPassword } = user;
-    userWithoutPassword.nom_correo = this.encryptionService.decrypt(userWithoutPassword.nom_correo);
-    userWithoutPassword.nom_usuario = this.encryptionService.decrypt(userWithoutPassword.nom_usuario);
-
+    const {
+      nom_contrasena: _,
+      idu_aplicacion: __,
+      num_centro: ___,
+      num_encargado: ____,
+      num_puesto: _____,
+      ...userWithoutData
+    } = user;
+  
     return {
-      ...userWithoutPassword,
-      token: this.getJwtToken({ id: user.idu_usuario }) 
+      ...userWithoutData,
+      nom_correo: decryptedCorreo,
+      nom_usuario: decryptedUsuario,
+      position: {
+        ...user.position,
+        nom_rol: decryptedRol,
+      },
+      aplicacion,
+      centro,
+      encargado,
+      puesto,
+      token: this.getJwtToken({ id: user.idu_usuario }),
     };
   }
+  
 
   async checkAuthStatus( user: User ){
     const token = await this.getJwtToken({ id: user.idu_usuario });

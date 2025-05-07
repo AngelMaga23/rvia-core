@@ -32,8 +32,20 @@ export class AppAreaService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} appArea`;
+  async findOne(id: number) {
+    try {
+      const app = await this.appAreaRepository.findOne({
+        where: { idu_aplicacion: id },
+        select: ['idu_aplicacion', 'nom_aplicacion'],
+      });
+   
+      return {
+        idu_aplicacion: app.idu_aplicacion,
+        nom_app: app.nom_aplicacion,
+      };
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
   }
 
   update(id: number, updateAppAreaDto: UpdateAppAreaDto) {

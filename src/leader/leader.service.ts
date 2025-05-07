@@ -51,7 +51,10 @@ export class LeaderService {
   async findOne(id: string) {
     try {
 
-      const encargado = await this.leaderRepository.findOneBy({ num_empleado: +id });
+      const encargado = await this.leaderRepository.findOne({
+        where: { num_empleado: +id },
+        select: ['idu_encargado','nom_empleado', 'num_empleado']
+      });
 
       return encargado;
 
