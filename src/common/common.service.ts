@@ -48,13 +48,24 @@ export class CommonService implements OnModuleInit {
   }
 
   decryptWithKey(encryptedText: string, key: Buffer): string {
-    const [ivHex, encrypted] = encryptedText.split(':');
-    const iv = Buffer.from(ivHex, 'hex');
-    const decipher = createDecipheriv(this.algorithm, key, iv);
-    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
-    return decrypted;
+
+    if (!encryptedText.includes(':')) {
+      return encryptedText;
+    }
+  
+    try {
+      const [ivHex, encrypted] = encryptedText.split(':');
+      const iv = Buffer.from(ivHex, 'hex');
+      const decipher = createDecipheriv(this.algorithm, key, iv);
+      let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+      decrypted += decipher.final('utf8');
+      return decrypted;
+    } catch (err) {
+
+      return encryptedText;
+    }
   }
+  
 
   decrypt(encryptedText: string): string {
     return this.decryptWithKey(encryptedText, this.key);
