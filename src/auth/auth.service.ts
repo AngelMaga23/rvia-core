@@ -265,6 +265,10 @@ export class AuthService {
         user.position = position;
       }
 
+      if(updateUserDto.num_puesto === 1){
+        user.num_encargado = null;
+      }
+
       if(updateUserDto.nom_correo) updateUserDto.nom_correo = this.encryptionService.encrypt(updateUserDto.nom_correo);
       if(updateUserDto.nom_usuario) updateUserDto.nom_usuario = this.encryptionService.encrypt(updateUserDto.nom_usuario);
 
