@@ -285,6 +285,7 @@ export class AuthService {
       await this.userRepository.save(user);
 
       user.nom_usuario = this.encryptionService.decrypt(user.nom_usuario);
+      user.position.nom_rol = this.encryptionService.decrypt(user.position.nom_rol);
 
       return user;
 
