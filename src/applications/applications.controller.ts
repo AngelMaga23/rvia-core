@@ -209,4 +209,14 @@ export class ApplicationsController {
   ) {
     await this.applicationsService.getStaticFile7z(id, res);
   }
+
+  @Get('download-doc/:id')
+  @Auth(ValidRoles.admin, ValidRoles.autorizador, ValidRoles.user)
+  async findFileDoc(
+    @Res() res: Response,
+    @Param('id') id: number
+  ) {
+    await this.applicationsService.getStaticFileDoc7z(id, res);
+  }
+
 }

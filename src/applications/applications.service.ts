@@ -782,6 +782,28 @@ export class ApplicationsService {
     throw new BadRequestException('No se pudo obtener el IDU del proyecto');
   }
   
+  async getStaticFileDoc7z(id: number, response): Promise<void> {
+    const application = await this.applicationRepository.findOne({
+      where: { idu_aplicacion: id },
+      relations: ['applicationstatus', 'user', 'scans'],
+    });
+    if (!application) throw new NotFoundException(`Aplicación con ID ${id} no encontrada`);
+  
+    const decryptedAppName = this.encryptionService.decrypt(application.nom_aplicacion);
+    const filePath = join(this.downloadPath,`${application.idu_proyecto}_${decryptedAppName}`, `doc_${application.idu_proyecto}_${decryptedAppName}.7z`);
+
+    if (!existsSync(filePath)) throw new BadRequestException(`No se encontró el archivo ${application.idu_proyecto}_${decryptedAppName}.7z`);
+  
+    response.setHeader('Content-Type', 'application/x-7z-compressed');
+    response.setHeader('Content-Disposition', `attachment; filename="${application.idu_proyecto}_${decryptedAppName}.7z"; filename*=UTF-8''${encodeURIComponent(application.idu_proyecto + '_' + decryptedAppName)}.7z`);
+
+    const readStream = createReadStream(filePath);
+    readStream.pipe(response);
+  
+    readStream.on('error', (err) => {
+      throw new BadRequestException(`Error al leer el archivo: ${err.message}`);
+    });
+  }
 
   private handleDBExceptions(error: any) {
     if (error.code === '23505') throw new BadRequestException(error.detail);
