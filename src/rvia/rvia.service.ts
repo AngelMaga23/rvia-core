@@ -130,6 +130,12 @@ export class RviaService {
     return { isValidProcess: true, messageRVIA: "Proceso IA Iniciado Correctamente" };
   }
 
+  async ApplicationInitDimProcess(aplicacion: Application) {
+    const args = this.buildWorkerArgs(aplicacion);
+    await this.fireAndForgetProcess(args, this.workerService.runInitDimProcess.bind(this.workerService), 'DIM');
+    return { isValidProcess: true, messageRVIA: "Proceso IA Iniciado Correctamente" };
+  }
+
   async ApplicationInitDocProcess(aplicacion: Application) {
     const args = this.buildWorkerArgs(aplicacion);
     await this.fireAndForgetProcess(args, this.workerService.runInitDocProcess.bind(this.workerService), 'DOC');
@@ -142,7 +148,11 @@ export class RviaService {
     return { isValidProcess: true, messageRVIA: "Proceso IA Iniciado Correctamente" };
   }
   
-
+  async ApplicationInitCapProcess(aplicacion: Application) {
+    const args = this.buildWorkerArgs(aplicacion);
+    await this.fireAndForgetProcess(args, this.workerService.runInitCapProcess.bind(this.workerService), 'CAP');
+    return { isValidProcess: true, messageRVIA: "Proceso IA Iniciado Correctamente" };
+  }
 
   async getVersion() {
 

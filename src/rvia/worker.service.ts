@@ -36,6 +36,10 @@ export class WorkerService {
     return this.runWorker('./src/rvia/workerProcess/worker-act.js', args);
   }
 
+  runInitDimProcess(args: any[]): Promise<any> {
+    return this.runWorker('./src/rvia/workerProcess/worker-dim.js', args);
+  }
+
   runInitDocProcess(args: any[]): Promise<any> {
     return this.runWorker('./src/rvia/workerProcess/worker-doc.js', args);
   }
@@ -44,5 +48,7 @@ export class WorkerService {
     return this.runWorker('./src/rvia/workerProcess/worker-dof.js', args);
   }
 
-
+  runInitCapProcess(args: any[]): Promise<any> {
+    return this.runWorker('./src/rvia/workerProcess/worker-cap.js', args);
+  }
 }

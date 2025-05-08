@@ -36,8 +36,10 @@ import { envs } from 'src/config';
 
 const addonAct = require(envs.rviaactPath);
 const addonSan = require(envs.rviasaPath);
+// const addonDim = require(envs.rviadimPath);
 const addonDoc = require(envs.rviadocPath);
 const addonDof = require(envs.rviadofPath);
+// const addonCap = require(envs.rviacapPath);
 
 @Injectable()
 export class ApplicationsService {
@@ -499,6 +501,10 @@ export class ApplicationsService {
         rviaProcess = await this.rviaService.ApplicationInitActProcess(application);
       }
 
+      if( createFileDto.num_accion === 4 ){
+        rviaProcess = await this.rviaService.ApplicationInitDimProcess(application);
+      }
+
       if( createFileDto.num_accion === 0 ){
         if(createFileDto.opc_arquitectura[1]){
           rviaProcess = await this.rviaService.ApplicationInitDocProcess(application);
@@ -506,6 +512,10 @@ export class ApplicationsService {
 
         if(createFileDto.opc_arquitectura[2]){
           rviaProcess = await this.rviaService.ApplicationInitDofProcess(application);
+        }
+
+        if(createFileDto.opc_arquitectura[3]){
+          rviaProcess = await this.rviaService.ApplicationInitCapProcess(application);
         }
 
       }
@@ -742,6 +752,10 @@ export class ApplicationsService {
     if (num_accion === 2) {
       return addonSan.coreIA.getIDProjectSAN();
     }
+
+    // if (num_accion === 4) {
+    //   return addonDim.coreIA.getIDProjectDIM();
+    // }
   
     if (num_accion === 0) {
       const tieneOpcionTrue = Object.values(opc_arquitectura).some(v => v === true);
@@ -757,6 +771,10 @@ export class ApplicationsService {
       if (opc_arquitectura["2"]) {
         return addonDof.coreIA.getIDProjectDOF();
       }
+
+      // if (opc_arquitectura["3"]) {
+      //   return addonCap.coreIA.getIDProjectCAP();
+      // }
   
       throw new BadRequestException('Es necesario seleccionar una opción de arquitectura');
     }
