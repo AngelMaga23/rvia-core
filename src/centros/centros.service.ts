@@ -44,8 +44,8 @@ export class CentrosService {
       });
    
       return {
-        numero: centro.num_centro,
-        nombre: centro.nom_centro,
+        num_centro: centro.num_centro,
+        nom_centro: centro.nom_centro,
       };
     } catch (error) {
       this.handleDBExceptions(error);
