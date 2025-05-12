@@ -15,6 +15,8 @@ import { LeaderService } from 'src/leader/leader.service';
 import { CentrosService } from 'src/centros/centros.service';
 import { PositionService } from 'src/position/position.service';
 import { AppAreaService } from 'src/app-area/app-area.service';
+import { UpdatePasswordDto } from './dto/update-password.dto';
+import { use } from 'passport';
 
 
 
@@ -297,6 +299,45 @@ export class AuthService {
       this.handleDBErrors(error);
     }
   }
+
+  async changePassword(user: User, updatePasswordDto: UpdatePasswordDto) {
+    try {
+      const usuario = await this.userRepository.findOne({
+        where: { idu_usuario: user.idu_usuario },
+        relations: ['position'],
+      });
+
+      if (!usuario) {
+        throw new NotFoundException('Usuario no encontrado');
+      }
+
+      // Asegurarse de que el usuario autenticado solo cambie su propia contraseña
+      if (user.idu_usuario !== usuario.idu_usuario) {
+        throw new ForbiddenException('No tienes permiso para cambiar esta contraseña');
+      }
+
+      if (!updatePasswordDto.nom_contrasena || updatePasswordDto.nom_contrasena.trim() === '') {
+        throw new BadRequestException('La nueva contraseña es requerida');
+      }
+
+      // Hashear la nueva contraseña de forma asíncrona
+      usuario.nom_contrasena = await bcrypt.hash(updatePasswordDto.nom_contrasena, 10);
+
+      await this.userRepository.save(usuario);
+
+      // Desencriptar datos para retorno seguro
+      usuario.nom_usuario = this.encryptionService.decrypt(usuario.nom_usuario);
+      usuario.position.nom_rol = this.encryptionService.decrypt(usuario.position.nom_rol);
+
+      // Eliminar la contraseña del objeto retornado por seguridad
+      delete usuario.nom_contrasena;
+
+      return usuario;
+    } catch (error) {
+      this.handleDBErrors(error);
+    }
+  }
+
 
   private getJwtToken( payload: JwtPayload ) {
 

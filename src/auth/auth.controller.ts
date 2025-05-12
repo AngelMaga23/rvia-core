@@ -7,6 +7,7 @@ import { User } from './entities/user.entity';
 import { ValidRoles } from './interfaces';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BadRequestResponse, ForbiddenResponse, InternalServerErrorResponse, UnauthorizedResponse } from 'src/common/dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -35,6 +36,12 @@ export class AuthController {
 
     //return this.authService.login(loginUserDto);
     return uuu;
+  }
+
+  @Post('change-password')
+  @Auth()
+  changePassword(@GetUser() user: User, @Body() updatePasswordDto: UpdatePasswordDto) {
+    return this.authService.changePassword(user, updatePasswordDto);
   }
 
   // Rutas GET más específicas
