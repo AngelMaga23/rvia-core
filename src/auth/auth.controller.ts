@@ -64,7 +64,7 @@ export class AuthController {
   @ApiResponse({ status:200, description:'Se obtuvo el usuario', type: UserResponseDto})
   @ApiResponse({ status:401, description:'Unauthorized', type: UnauthorizedResponse })
   @ApiResponse({ status:500, description:'Internal server error', type: InternalServerErrorResponse })
-  @Auth(ValidRoles.admin, ValidRoles.user)
+  @Auth()
   findById(@Param('id') id: string) {
     return this.authService.findUserById(id);
   }
@@ -88,7 +88,7 @@ export class AuthController {
   @ApiResponse({ status:401, description:'Unauthorized', type: UnauthorizedResponse })
   @ApiResponse({ status:403, description:'Forbidden', type: ForbiddenResponse })
   @ApiResponse({ status:500, description:'Internal server error', type: InternalServerErrorResponse })
-  @Auth(ValidRoles.admin, ValidRoles.user)
+  @Auth()
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @GetUser() user: User) {
     return this.authService.update(id, updateUserDto, user);
   }
