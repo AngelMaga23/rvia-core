@@ -130,7 +130,7 @@ export class ApplicationsService {
         throw new BadRequestException('Invalid GitHub repository URL');
       }
 
-      return await this.processRepository(repoInfo.repoName, repoInfo.userName, user, file, createApplicationDto.num_accion, createApplicationDto.opc_lenguaje, 'GitHub', createApplicationDto.opc_arquitectura);
+      return await this.processRepository(repoInfo.repoName, repoInfo.userName, user, file, createApplicationDto.num_accion, createApplicationDto.opc_lenguaje, 'GitHub', createApplicationDto.opc_arquitectura, createApplicationDto.idu_aplicacion_de_negocio);
 
     } catch (error) {
       this.handleDBExceptions(error);
@@ -144,14 +144,14 @@ export class ApplicationsService {
         throw new BadRequestException('Invalid GitLab repository URL');
       }
 
-      return await this.processRepository(repoInfo.repoName, `${repoInfo.userName}/${repoInfo.groupName}`, user, file, createApplicationDto.num_accion, createApplicationDto.opc_lenguaje, 'GitLab', createApplicationDto.opc_arquitectura);
+      return await this.processRepository(repoInfo.repoName, `${repoInfo.userName}/${repoInfo.groupName}`, user, file, createApplicationDto.num_accion, createApplicationDto.opc_lenguaje, 'GitLab', createApplicationDto.opc_arquitectura, createApplicationDto.idu_aplicacion_de_negocio);
 
     } catch (error) {
       this.handleDBExceptions(error);
     }
   }
 
-  private async processRepository(repoName: string, repoUserName: string, user: User, file, numAccion: number, opcLenguaje: number, platform: string, opcArquitectura) {
+  private async processRepository(repoName: string, repoUserName: string, user: User, file, numAccion: number, opcLenguaje: number, platform: string, opcArquitectura, idu_aplicacion_de_negocio: number) {
 
     // const obj = new addon.CRvia(this.crviaEnvironment);
     const iduProject = this.obtenerIDUProject(numAccion, opcArquitectura);
@@ -242,6 +242,7 @@ export class ApplicationsService {
       application.nom_aplicacion = this.encryptionService.encrypt(repoName);
       application.idu_proyecto = iduProject;
       application.num_accion = numAccion;
+      application.idu_aplicacion_de_negocio = idu_aplicacion_de_negocio;
       application.opc_arquitectura = opcArquitectura || {"1": false, "2": false, "3": false, "4": false};
       application.opc_lenguaje = opcLenguaje;
       application.opc_estatus_doc = opcArquitectura['1'] ? 2 : 0;
@@ -439,6 +440,7 @@ export class ApplicationsService {
       application.nom_aplicacion = this.encryptionService.encrypt(nameApplication);
       application.idu_proyecto = iduProject;
       application.num_accion = createFileDto.num_accion;
+      application.idu_aplicacion_de_negocio = createFileDto.idu_aplicacion_de_negocio;
       application.opc_arquitectura = createFileDto.opc_arquitectura || {"1": false, "2": false, "3": false, "4": false};
       application.opc_lenguaje = createFileDto.opc_lenguaje;
       // Array.isArray(aplicacion.opc_arquitectura) && aplicacion.opc_arquitectura.length > 1 ? aplicacion.opc_arquitectura[1]

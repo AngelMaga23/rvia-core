@@ -19,6 +19,11 @@ export class CreateApplicationDto {
     @Transform(({ value }) => parseInt(value, 10))
     opc_lenguaje: number = 0;
 
+    @IsNumber()
+    // @IsOptional()
+    @Transform(({ value }) => parseInt(value, 10))
+    idu_aplicacion_de_negocio: number;
+
     @IsOptional()
     @Transform(({ value }) => {
         try {

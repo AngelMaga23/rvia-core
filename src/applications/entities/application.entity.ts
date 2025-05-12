@@ -51,6 +51,11 @@ export class Application {
     @Type(() => Number)
     opc_estatus_calificar: number;
 
+    @Column()
+    @IsNumber()
+    @Type(() => Number)
+    idu_aplicacion_de_negocio: number;
+
     @Column({ type: 'jsonb', default: { "1": false, "2": false, "3": false, "4": false } })
     opc_arquitectura: Record<string, boolean>;
     // @CreateDateColumn({ type: 'timestamp' })
