@@ -62,9 +62,9 @@ export class CreateUserDto {
     @Transform(({ value }) => parseInt(value, 10))
     num_puesto: number;
 
-    @IsNumber()
-    @Transform(({ value }) => parseInt(value, 10))
-    idu_aplicacion: number;
+    // @IsNumber()
+    // @Transform(({ value }) => parseInt(value, 10))
+    // idu_aplicacion: number;
 
     @IsNumber()
     @Transform(({ value }) => parseInt(value, 10))
