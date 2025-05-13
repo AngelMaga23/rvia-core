@@ -36,8 +36,10 @@ import { envs } from 'src/config';
 
 const addonAct = require(envs.rviaactPath);
 const addonSan = require(envs.rviasaPath);
+// const addonDim = require(envs.rviadimPath);
 const addonDoc = require(envs.rviadocPath);
 const addonDof = require(envs.rviadofPath);
+// const addonCap = require(envs.rviacapPath);
 
 @Injectable()
 export class ApplicationsService {
@@ -128,7 +130,7 @@ export class ApplicationsService {
         throw new BadRequestException('Invalid GitHub repository URL');
       }
 
-      return await this.processRepository(repoInfo.repoName, repoInfo.userName, user, file, createApplicationDto.num_accion, createApplicationDto.opc_lenguaje, 'GitHub', createApplicationDto.opc_arquitectura);
+      return await this.processRepository(repoInfo.repoName, repoInfo.userName, user, file, createApplicationDto.num_accion, createApplicationDto.opc_lenguaje, 'GitHub', createApplicationDto.opc_arquitectura, createApplicationDto.idu_aplicacion_de_negocio);
 
     } catch (error) {
       this.handleDBExceptions(error);
@@ -142,14 +144,14 @@ export class ApplicationsService {
         throw new BadRequestException('Invalid GitLab repository URL');
       }
 
-      return await this.processRepository(repoInfo.repoName, `${repoInfo.userName}/${repoInfo.groupName}`, user, file, createApplicationDto.num_accion, createApplicationDto.opc_lenguaje, 'GitLab', createApplicationDto.opc_arquitectura);
+      return await this.processRepository(repoInfo.repoName, `${repoInfo.userName}/${repoInfo.groupName}`, user, file, createApplicationDto.num_accion, createApplicationDto.opc_lenguaje, 'GitLab', createApplicationDto.opc_arquitectura, createApplicationDto.idu_aplicacion_de_negocio);
 
     } catch (error) {
       this.handleDBExceptions(error);
     }
   }
 
-  private async processRepository(repoName: string, repoUserName: string, user: User, file, numAccion: number, opcLenguaje: number, platform: string, opcArquitectura) {
+  private async processRepository(repoName: string, repoUserName: string, user: User, file, numAccion: number, opcLenguaje: number, platform: string, opcArquitectura, idu_aplicacion_de_negocio: number) {
 
     // const obj = new addon.CRvia(this.crviaEnvironment);
     const iduProject = this.obtenerIDUProject(numAccion, opcArquitectura);
@@ -240,6 +242,7 @@ export class ApplicationsService {
       application.nom_aplicacion = this.encryptionService.encrypt(repoName);
       application.idu_proyecto = iduProject;
       application.num_accion = numAccion;
+      application.idu_aplicacion_de_negocio = idu_aplicacion_de_negocio;
       application.opc_arquitectura = opcArquitectura || {"1": false, "2": false, "3": false, "4": false};
       application.opc_lenguaje = opcLenguaje;
       application.opc_estatus_doc = opcArquitectura['1'] ? 2 : 0;
@@ -437,6 +440,7 @@ export class ApplicationsService {
       application.nom_aplicacion = this.encryptionService.encrypt(nameApplication);
       application.idu_proyecto = iduProject;
       application.num_accion = createFileDto.num_accion;
+      application.idu_aplicacion_de_negocio = createFileDto.idu_aplicacion_de_negocio;
       application.opc_arquitectura = createFileDto.opc_arquitectura || {"1": false, "2": false, "3": false, "4": false};
       application.opc_lenguaje = createFileDto.opc_lenguaje;
       // Array.isArray(aplicacion.opc_arquitectura) && aplicacion.opc_arquitectura.length > 1 ? aplicacion.opc_arquitectura[1]
@@ -499,6 +503,10 @@ export class ApplicationsService {
         rviaProcess = await this.rviaService.ApplicationInitActProcess(application);
       }
 
+      if( createFileDto.num_accion === 4 ){
+        rviaProcess = await this.rviaService.ApplicationInitDimProcess(application);
+      }
+
       if( createFileDto.num_accion === 0 ){
         if(createFileDto.opc_arquitectura[1]){
           rviaProcess = await this.rviaService.ApplicationInitDocProcess(application);
@@ -506,6 +514,10 @@ export class ApplicationsService {
 
         if(createFileDto.opc_arquitectura[2]){
           rviaProcess = await this.rviaService.ApplicationInitDofProcess(application);
+        }
+
+        if(createFileDto.opc_arquitectura[3]){
+          rviaProcess = await this.rviaService.ApplicationInitCapProcess(application);
         }
 
       }
@@ -742,6 +754,10 @@ export class ApplicationsService {
     if (num_accion === 2) {
       return addonSan.coreIA.getIDProjectSAN();
     }
+
+    // if (num_accion === 4) {
+    //   return addonDim.coreIA.getIDProjectDIM();
+    // }
   
     if (num_accion === 0) {
       const tieneOpcionTrue = Object.values(opc_arquitectura).some(v => v === true);
@@ -757,6 +773,10 @@ export class ApplicationsService {
       if (opc_arquitectura["2"]) {
         return addonDof.coreIA.getIDProjectDOF();
       }
+
+      // if (opc_arquitectura["3"]) {
+      //   return addonCap.coreIA.getIDProjectCAP();
+      // }
   
       throw new BadRequestException('Es necesario seleccionar una opción de arquitectura');
     }
@@ -764,6 +784,28 @@ export class ApplicationsService {
     throw new BadRequestException('No se pudo obtener el IDU del proyecto');
   }
   
+  async getStaticFileDoc7z(id: number, response): Promise<void> {
+    const application = await this.applicationRepository.findOne({
+      where: { idu_aplicacion: id },
+      relations: ['applicationstatus', 'user', 'scans'],
+    });
+    if (!application) throw new NotFoundException(`Aplicación con ID ${id} no encontrada`);
+  
+    const decryptedAppName = this.encryptionService.decrypt(application.nom_aplicacion);
+    const filePath = join(this.downloadPath,`${application.idu_proyecto}_${decryptedAppName}`, `doc_${application.idu_proyecto}_${decryptedAppName}.7z`);
+
+    if (!existsSync(filePath)) throw new BadRequestException(`No se encontró el archivo ${application.idu_proyecto}_${decryptedAppName}.7z`);
+  
+    response.setHeader('Content-Type', 'application/x-7z-compressed');
+    response.setHeader('Content-Disposition', `attachment; filename="${application.idu_proyecto}_${decryptedAppName}.7z"; filename*=UTF-8''${encodeURIComponent(application.idu_proyecto + '_' + decryptedAppName)}.7z`);
+
+    const readStream = createReadStream(filePath);
+    readStream.pipe(response);
+  
+    readStream.on('error', (err) => {
+      throw new BadRequestException(`Error al leer el archivo: ${err.message}`);
+    });
+  }
 
   private handleDBExceptions(error: any) {
     if (error.code === '23505') throw new BadRequestException(error.detail);

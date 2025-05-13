@@ -22,6 +22,8 @@ interface EnvVars {
   RVIAACT_PATH: string;
   RVIADOC_PATH: string;
   RVIADOF_PATH: string;
+  RVIACAP_PATH: string;
+  RVIADIM_PATH: string;
 
   WORKERS_COUNT: number;  
   PATH_PROJECT: string;
@@ -47,6 +49,8 @@ const envsSchema = joi.object({
   RVIAACT_PATH: joi.string().required(),
   RVIADOC_PATH: joi.string().required(),
   RVIADOF_PATH: joi.string().required(),
+  RVIACAP_PATH: joi.string().optional(),
+  RVIADIM_PATH: joi.string().optional(),
 
   WORKERS_COUNT: joi.number().required(),
   PATH_PROJECT: joi.string().required(),
@@ -83,6 +87,8 @@ export const envs = {
   rviaactPath: envVars.RVIAACT_PATH,
   rviadocPath: envVars.RVIADOC_PATH ,
   rviadofPath: envVars.RVIADOF_PATH,
+  rviacapPath: envVars.RVIACAP_PATH,
+  rviadimPath: envVars.RVIADIM_PATH,
 
   workersCount: envVars.WORKERS_COUNT,
   pathProject: envVars.PATH_PROJECT,

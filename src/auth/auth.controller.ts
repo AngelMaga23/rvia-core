@@ -7,6 +7,7 @@ import { User } from './entities/user.entity';
 import { ValidRoles } from './interfaces';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BadRequestResponse, ForbiddenResponse, InternalServerErrorResponse, UnauthorizedResponse } from 'src/common/dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -37,6 +38,12 @@ export class AuthController {
     return uuu;
   }
 
+  @Post('change-password')
+  @Auth()
+  changePassword(@GetUser() user: User, @Body() updatePasswordDto: UpdatePasswordDto) {
+    return this.authService.changePassword(user, updatePasswordDto);
+  }
+
   // Rutas GET más específicas
   @Get('check-status')
   @ApiResponse({ status:200, description:'Se realizó la conexión del RVIA correctamente', type: LoginUserResponseDto})
@@ -57,7 +64,7 @@ export class AuthController {
   @ApiResponse({ status:200, description:'Se obtuvo el usuario', type: UserResponseDto})
   @ApiResponse({ status:401, description:'Unauthorized', type: UnauthorizedResponse })
   @ApiResponse({ status:500, description:'Internal server error', type: InternalServerErrorResponse })
-  @Auth(ValidRoles.admin)
+  @Auth()
   findById(@Param('id') id: string) {
     return this.authService.findUserById(id);
   }
@@ -81,7 +88,7 @@ export class AuthController {
   @ApiResponse({ status:401, description:'Unauthorized', type: UnauthorizedResponse })
   @ApiResponse({ status:403, description:'Forbidden', type: ForbiddenResponse })
   @ApiResponse({ status:500, description:'Internal server error', type: InternalServerErrorResponse })
-  @Auth(ValidRoles.admin)
+  @Auth()
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @GetUser() user: User) {
     return this.authService.update(id, updateUserDto, user);
   }

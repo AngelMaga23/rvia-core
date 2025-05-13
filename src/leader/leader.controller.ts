@@ -17,6 +17,11 @@ export class LeaderController {
     return this.leaderService.findAll();
   }
 
+  @Get('puesto/:id')
+  findLeader(@Param('id') id: string) {
+    return this.leaderService.findByPosition(+id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.leaderService.findByLevel(+id);

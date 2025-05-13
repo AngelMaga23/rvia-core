@@ -25,6 +25,11 @@ export class CreateFileDto {
       })
       @IsObject({ message: 'opc_arquitectura debe ser un objeto' })
     opc_arquitectura:Record<string, boolean>;
+
+    @IsNumber()
+    // @IsOptional()
+    @Transform(({ value }) => parseInt(value, 10))
+    idu_aplicacion_de_negocio: number;
     
     @IsOptional()
     fec_creacion?: Date;

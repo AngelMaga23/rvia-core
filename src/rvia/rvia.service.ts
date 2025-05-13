@@ -14,6 +14,10 @@ import { Worker } from 'worker_threads';
 
 const addonSAN = require(envs.rviasaPath);
 const addonACT = require(envs.rviaactPath);
+// const addonDIM = require(envs.rviadimPath);
+// const addonCAP = require(envs.rviacapPath);
+const addonDOC = require(envs.rviadocPath);
+const addonDOF = require(envs.rviadofPath);
 
 @Injectable()
 export class RviaService {
@@ -130,6 +134,12 @@ export class RviaService {
     return { isValidProcess: true, messageRVIA: "Proceso IA Iniciado Correctamente" };
   }
 
+  async ApplicationInitDimProcess(aplicacion: Application) {
+    const args = this.buildWorkerArgs(aplicacion);
+    await this.fireAndForgetProcess(args, this.workerService.runInitDimProcess.bind(this.workerService), 'DIM');
+    return { isValidProcess: true, messageRVIA: "Proceso IA Iniciado Correctamente" };
+  }
+
   async ApplicationInitDocProcess(aplicacion: Application) {
     const args = this.buildWorkerArgs(aplicacion);
     await this.fireAndForgetProcess(args, this.workerService.runInitDocProcess.bind(this.workerService), 'DOC');
@@ -142,14 +152,30 @@ export class RviaService {
     return { isValidProcess: true, messageRVIA: "Proceso IA Iniciado Correctamente" };
   }
   
-
+  async ApplicationInitCapProcess(aplicacion: Application) {
+    const args = this.buildWorkerArgs(aplicacion);
+    await this.fireAndForgetProcess(args, this.workerService.runInitCapProcess.bind(this.workerService), 'CAP');
+    return { isValidProcess: true, messageRVIA: "Proceso IA Iniciado Correctamente" };
+  }
 
   async getVersion() {
 
-    // const obj = new addon.CRvia(this.crviaEnvironment);
+    const versionSan = await addonSAN.coreIA.getVersionSAN();
+    const versionAct = await addonACT.coreIA.getVersionACT();
+    // const versionDim = await addonDIM.coreIA.getVersionDIM();
+    const versionDoc = await addonDOC.coreIA.getVersionDOC();
+    const versionDof = await addonDOF.coreIA.getVersionDOF();
+    // const versionCap = await addonCAP.coreIA.getVersionCAP();
 
-    // return await addon.coreIA.getVersionACT();
-    return "1.0.0";
+    // return  addon.coreIA.getVersionACT();
+    return {
+      versionSan,
+      versionAct,
+      "versionDim": "0.0.0",
+      versionDoc,
+      versionDof,
+      "versionCap": "0.0.0"
+    };
 
   }
 

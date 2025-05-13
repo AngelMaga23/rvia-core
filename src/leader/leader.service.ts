@@ -48,6 +48,21 @@ export class LeaderService {
     }
   }
 
+  async findOne(id: string) {
+    try {
+
+      const encargado = await this.leaderRepository.findOne({
+        where: { num_empleado: +id },
+        select: ['idu_encargado','nom_empleado', 'num_empleado']
+      });
+
+      return encargado;
+
+    } catch (error) {
+      this.handleDBExceptions( error );
+    }
+  }
+
   async findByLevel(id: number) {
     const puesto = await this.puestosService.findOne(id);
   
@@ -82,7 +97,35 @@ export class LeaderService {
     };
   }
   
+  async findByPosition(id: number) {
+    try {
 
+      const puesto = await this.puestosService.findOne(id);
+  
+  
+      if (!puesto) {
+        throw new Error(`Puesto con ID ${id} no encontrado`);
+      }
+
+      const nivel = (puesto as Position).num_puesto;
+      let encargados = [];
+      if (nivel !== 1) {
+        const nivelSuperior = nivel - 1;
+        const puestoSuperior = await this.puestosService.findByLevel(nivelSuperior);
+    
+        if (puestoSuperior) {
+          encargados = await this.leaderRepository.find({
+            where: { num_puesto: puestoSuperior.idu_puesto },
+            // select: ['idu_encargado', 'num_empleado', 'nom_empleado']
+          });
+        }
+      }
+      return {encargados};
+
+    } catch (error) {
+      this.handleDBExceptions( error );
+    }
+  }
   async update(id: number, updateLeaderDto: UpdateLeaderDto) {
 
     const encargado = await this.leaderRepository.preload({

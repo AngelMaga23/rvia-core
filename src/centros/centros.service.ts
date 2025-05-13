@@ -36,9 +36,22 @@ export class CentrosService {
 
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} centro`;
+  async findOne(id: number) {
+    try {
+      const centro = await this.centroRepository.findOne({
+        where: { num_centro: id },
+        select: ['num_centro', 'nom_centro'],
+      });
+   
+      return {
+        num_centro: centro.num_centro,
+        nom_centro: centro.nom_centro,
+      };
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
   }
+  
 
   update(id: number, updateCentroDto: UpdateCentroDto) {
     return `This action updates a #${id} centro`;
