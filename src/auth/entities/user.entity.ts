@@ -44,8 +44,8 @@ export class User {
     @Column({ type: 'int' })
     num_puesto: number;
 
-    @Column({ type: 'int' })
-    idu_aplicacion: number;
+    // @Column({ type: 'int' })
+    // idu_aplicacion: number;
   
     @Column({ type: 'int' })
     num_centro: number;

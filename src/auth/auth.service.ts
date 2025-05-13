@@ -97,7 +97,7 @@ export class AuthService {
         ...user.position,
         nom_rol: this.encryptionService.decrypt(user.position.nom_rol),
       },
-      aplicacion: await this.appService.findOne(user.idu_aplicacion),
+      // aplicacion: await this.appService.findOne(user.idu_aplicacion),
       centro: await this.centroService.findOne(user.num_centro),
       encargado: await this.encargadoService.findOne(user.num_encargado),
       puesto: await this.puestoService.findOne(user.num_puesto),
@@ -155,7 +155,7 @@ export class AuthService {
         nom_contrasena: true,
         idu_usuario: true,
         nom_usuario: true,
-        idu_aplicacion: true,
+        // idu_aplicacion: true,
         num_centro: true,
         num_encargado: true,
         num_puesto: true,
@@ -177,7 +177,7 @@ export class AuthService {
     const decryptedRol = this.encryptionService.decrypt(user.position.nom_rol);
   
 
-    const aplicacion = await this.appService.findOne(user.idu_aplicacion);
+    // const aplicacion = await this.appService.findOne(user.idu_aplicacion);
     const centro = await this.centroService.findOne(user.num_centro);
     const encargado = await this.encargadoService.findOne(user.num_encargado);
     const puesto = await this.puestoService.findOne(user.num_puesto);
@@ -185,7 +185,7 @@ export class AuthService {
 
     const {
       nom_contrasena: _,
-      idu_aplicacion: __,
+      // idu_aplicacion: __,
       num_centro: ___,
       num_encargado: ____,
       num_puesto: _____,
@@ -200,7 +200,7 @@ export class AuthService {
         ...user.position,
         nom_rol: decryptedRol,
       },
-      aplicacion,
+      // aplicacion,
       centro,
       encargado,
       puesto,
