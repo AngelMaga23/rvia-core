@@ -45,8 +45,8 @@ export class CreateUserDto {
     @IsString()
     @MinLength(1)
     @Transform(({ value }) => value.trim())
-    @Matches(/^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?:\s+[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+){2,}$/, {
-      message: 'Escribe nombre completo, con al menos un nombre y dos apellidos, todos comenzando con letra mayúscula'
+    @Matches(/^(?:[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?:-[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)?|de|del|la|las|los|y)(?:\s+(?:[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?:-[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)?|de|del|la|las|los|y)){1,}$/, {
+      message: 'Escribe nombre completo, con al menos un nombre y un apellido, todos comenzando con letra mayúscula'
     })
     nom_usuario: string;
 
