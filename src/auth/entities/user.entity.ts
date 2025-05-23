@@ -53,8 +53,8 @@ export class User {
     @Column({ type: 'varchar', length: 10 })
     num_encargado: string;
 
-    // @CreateDateColumn({ type: 'timestamp' })
-    // created_at: Date;
+    @Column({ type: 'timestamp' })
+    fec_creacion: Date;
   
     // @UpdateDateColumn({ type: 'timestamp' })
     // updated_at: Date;

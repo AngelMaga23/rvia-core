@@ -52,7 +52,7 @@ export class AuthService {
 
   async findAllActiveUsers(){
 
-    const usuarios = await this.userRepository.find({ where: { opc_es_activo: true }});
+    const usuarios = await this.userRepository.find({ where: { opc_es_activo: true }, order:   { fec_creacion: 'DESC' } });
   
     const usuariosDesencriptados = await Promise.all(
       usuarios.map(async (usuario) => {
