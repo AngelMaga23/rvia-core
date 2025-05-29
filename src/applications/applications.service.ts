@@ -13,6 +13,9 @@ import { promisify } from 'util';
 import { pipeline } from 'stream';
 import * as fsExtra from 'fs-extra';
 import { promises as fs } from 'fs';
+import dayjs  from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 
 import { CreateApplicationDto, CreateFileDto } from './dto';
 import { Application } from './entities/application.entity';
@@ -40,6 +43,9 @@ const addonSan = require(envs.rviasaPath);
 const addonDoc = require(envs.rviadocPath);
 const addonDof = require(envs.rviadofPath);
 // const addonCap = require(envs.rviacapPath);
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 @Injectable()
 export class ApplicationsService {
@@ -97,6 +103,10 @@ export class ApplicationsService {
           (sum, cost) => sum + (cost.val_monto ? parseFloat(cost.val_monto) : 0),
           0
         );
+
+        (aplicacion as any).fec_creacion = dayjs(aplicacion.fec_creacion)
+          .tz('America/Mexico_City')
+          .format('DD/MM/YYYY - HH:mm');
 
         if (aplicacion.checkmarx && aplicacion.checkmarx.length > 0){
           aplicacion.checkmarx.forEach(checkmarx => { 
