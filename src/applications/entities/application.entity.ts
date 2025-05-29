@@ -97,8 +97,7 @@ export class Application {
     @OneToMany(() => Cost, cost => cost.application)
     cost: Cost[];
 
-    @IsDate()
-    @Type(() => Date)
+    @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
     fec_creacion: Date;
 
 }
