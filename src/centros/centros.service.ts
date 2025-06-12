@@ -16,8 +16,19 @@ export class CentrosService {
 
   ){}
 
-  create(createCentroDto: CreateCentroDto) {
-    return 'This action adds a new centro';
+  async create(createCentroDto: CreateCentroDto) {
+    try {
+        
+
+      const centro = this.centroRepository.create(createCentroDto);
+      await this.centroRepository.save(centro);
+
+      return centro;
+
+   } catch (error) {
+
+      this.handleDBExceptions( error );
+   }
   }
 
   async findAll() {
