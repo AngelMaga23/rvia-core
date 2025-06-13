@@ -132,6 +132,9 @@ export class CommonService implements OnModuleInit {
       if (error.detail?.includes('num_empleado')) {
         throw new BadRequestException('El número de empleado ya existe');
       }
+      if (error.detail?.includes('num_centro')) {
+        throw new BadRequestException('El número de centro ya existe');
+      }
       throw new BadRequestException(error.detail || 'Error de base de datos');
     }
 

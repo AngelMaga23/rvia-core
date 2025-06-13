@@ -28,7 +28,7 @@ export class CentrosService {
       return centro;
 
    } catch (error) {
-
+      console.log(error)
       this.commonService.handleDBExceptions( error );
    }
   }
