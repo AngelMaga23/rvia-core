@@ -10,7 +10,7 @@ export class LeaderController {
   constructor(private readonly leaderService: LeaderService) {}
 
   @Post()
-  // @Auth( ValidRoles.admin )
+  @Auth( ValidRoles.admin )
   create(@Body() createLeaderDto: CreateLeaderDto) {
     return this.leaderService.create(createLeaderDto);
   }
