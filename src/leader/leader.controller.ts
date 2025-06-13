@@ -2,12 +2,15 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { LeaderService } from './leader.service';
 import { CreateLeaderDto } from './dto/create-leader.dto';
 import { UpdateLeaderDto } from './dto/update-leader.dto';
+import { Auth } from '../auth/decorators';
+import { ValidRoles } from '../auth/interfaces/valid-roles';
 
 @Controller('leader')
 export class LeaderController {
   constructor(private readonly leaderService: LeaderService) {}
 
   @Post()
+  // @Auth( ValidRoles.admin )
   create(@Body() createLeaderDto: CreateLeaderDto) {
     return this.leaderService.create(createLeaderDto);
   }
