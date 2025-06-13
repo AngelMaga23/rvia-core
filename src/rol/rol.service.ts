@@ -30,7 +30,7 @@ export class RolService {
 
      } catch (error) {
 
-        this.handleDBExceptions( error );
+        this.encryptionService.handleDBExceptions( error );
      }
 
   }
@@ -47,7 +47,7 @@ export class RolService {
   
       return puestos;
     } catch (error) {
-      this.handleDBExceptions( error ); 
+      this.encryptionService.handleDBExceptions( error ); 
     }
 
     // return this.positionRepository.find();
@@ -78,10 +78,8 @@ export class RolService {
       return position;
 
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions(error);
     }
-
-    return position;
   }
 
   async remove(id: number) {
@@ -90,14 +88,6 @@ export class RolService {
     await this.rolRepository.remove( position );
 
     // return `This action removes a #${id} position`;
-  }
-
-  private handleDBExceptions( error:any ){
-    if( error.code === '23505' )
-      throw new BadRequestException(error.detail);
-
-    this.logger.error(error);
-    throw new InternalServerErrorException("Unexpected error, check server logs");
   }
 
 }

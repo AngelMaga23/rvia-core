@@ -139,7 +139,7 @@ export class AuthService {
 
 
     } catch (error) {
-      this.handleDBErrors(error);
+      this.encryptionService.handleDBExceptions(error);
     }
 
   }
@@ -296,7 +296,7 @@ export class AuthService {
       return user;
 
     } catch (error) {
-      this.handleDBErrors(error);
+      this.encryptionService.handleDBExceptions(error);
     }
   }
 
@@ -334,7 +334,7 @@ export class AuthService {
 
       return usuario;
     } catch (error) {
-      this.handleDBErrors(error);
+      this.encryptionService.handleDBExceptions(error);
     }
   }
 
@@ -359,29 +359,10 @@ export class AuthService {
   
     } catch (error) {
 
-      this.handleDBErrors(error);
+      this.encryptionService.handleDBExceptions(error);
       return false;
     }
   }
   
-
-  private handleDBErrors( error: any ): never {
-    console.log(error)
-    if ( error.code === '23505' || error.code === '42703' ){
-      if(error.detail.includes('num_empleado')){
-        throw new BadRequestException( "El número de empleado ya existe" );
-      }
-      throw new BadRequestException( error.detail );
-    }
-
-    if ( error instanceof NotFoundException )
-      throw error;
-
-    if( error.status && error.status == 400)
-      throw new BadRequestException( error.response );
-
-    throw new InternalServerErrorException('Please check server logs');
-
-  }
 
 }

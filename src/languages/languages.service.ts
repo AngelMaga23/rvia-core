@@ -31,7 +31,7 @@ export class LanguagesService {
 
    } catch (error) {
 
-      this.handleDBExceptions( error );
+      this.encryptionService.handleDBExceptions( error );
    }
   }
 
@@ -46,7 +46,7 @@ export class LanguagesService {
   
       return languages ;
     } catch (error) {
-      this.handleDBExceptions( error ); 
+      this.encryptionService.handleDBExceptions( error );
     }
 
   }
@@ -79,7 +79,7 @@ export class LanguagesService {
       return language;
 
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions( error );
     }
 
     return language;
@@ -97,13 +97,5 @@ export class LanguagesService {
     await this.languageRepository.remove( language );
 
     return { message: `Lenguaje ${nom_lenguaje} eliminado correctamente` };
-  }
-
-  private handleDBExceptions( error:any ){
-    if( error.code === '23505' )
-      throw new BadRequestException(error.detail);
-
-    this.logger.error(error);
-    throw new InternalServerErrorException("Unexpected error, check server logs");
   }
 }

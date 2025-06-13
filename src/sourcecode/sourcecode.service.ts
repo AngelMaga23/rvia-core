@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 import { CreateSourcecodeDto } from './dto/create-sourcecode.dto';
 import { Sourcecode } from './entities/sourcecode.entity';
+import { CommonService } from 'src/common/common.service';
 
 
 @Injectable()
@@ -13,7 +14,8 @@ export class SourcecodeService {
 
   constructor(
     @InjectRepository(Sourcecode)
-    private readonly sourceCodeRepository: Repository<Sourcecode>
+    private readonly sourceCodeRepository: Repository<Sourcecode>,
+    private readonly commonService: CommonService 
   ){}
 
   async create(createSourcecodeDto: CreateSourcecodeDto) {
@@ -26,7 +28,7 @@ export class SourcecodeService {
 
    } catch (error) {
 
-      this.handleDBExceptions( error );
+      this.commonService.handleDBExceptions( error );
    }
   }
 
@@ -41,14 +43,6 @@ export class SourcecodeService {
       throw new NotFoundException(`Código Fuente ${id} no encontrado `);
 
     return source; 
-  }
-
-  private handleDBExceptions( error:any ){
-    if( error.code === '23505' )
-      throw new BadRequestException(error.detail);
-
-    this.logger.error(error);
-    throw new InternalServerErrorException("Unexpected error, check server logs");
   }
 
 }

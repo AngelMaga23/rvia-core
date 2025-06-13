@@ -4,14 +4,19 @@ import { UpdatePositionDto } from './dto/update-position.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Position } from './entities/position.entity';
 import { Repository } from 'typeorm';
+import { CommonService } from 'src/common/common.service';
 
 @Injectable()
 export class PositionService {
 
   private readonly logger = new Logger('PuestosService');
 
-  @InjectRepository(Position)
-  private readonly puestosRepository: Repository<Position>
+  constructor(
+    @InjectRepository(Position)
+    private readonly puestosRepository: Repository<Position>,
+    private readonly commonService: CommonService
+  ){}
+
 
   create(createPositionDto: CreatePositionDto) {
     return 'This action adds a new position';
@@ -26,7 +31,7 @@ export class PositionService {
       return puestos;
 
     } catch (error) {
-      this.handleDBExceptions( error );
+      this.commonService.handleDBExceptions( error );
      
     }
   }
@@ -44,7 +49,7 @@ export class PositionService {
       return puesto;
 
     } catch (error) {
-      this.handleDBExceptions( error );
+      this.commonService.handleDBExceptions( error );
      
     }
 
@@ -64,7 +69,7 @@ export class PositionService {
       return puesto;
 
     } catch (error) {
-      this.handleDBExceptions( error );
+      this.commonService.handleDBExceptions( error );
      
     }
   }
@@ -77,13 +82,5 @@ export class PositionService {
     return `This action removes a #${id} position`;
   }
 
-
-  private handleDBExceptions( error:any ){
-    if( error.code === '23505' )
-      throw new BadRequestException(error.detail);
-
-    this.logger.error(error);
-    throw new InternalServerErrorException("Unexpected error, check server logs");
-  }
 
 }

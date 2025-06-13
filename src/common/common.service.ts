@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Repository, DataSource } from 'typeorm';
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'crypto';
@@ -12,6 +12,7 @@ export class CommonService implements OnModuleInit {
   private key: Buffer;
   private readonly oldKey?: Buffer;
   private readonly newKey?: Buffer;
+  private readonly logger = new Logger("CommonService");
 
   constructor(private dataSource: DataSource) {
 
@@ -124,4 +125,43 @@ export class CommonService implements OnModuleInit {
     fs.writeFileSync(envPath, envContent);
     // console.log(`✅ Se actualizó ${key} en: ${envPath}`);
   }
+
+
+  handleDBExceptions(error: any): never {
+    if (error.code === '23505' || error.code === '42703') {
+      if (error.detail?.includes('num_empleado')) {
+        throw new BadRequestException('El número de empleado ya existe');
+      }
+      throw new BadRequestException(error.detail || 'Error de base de datos');
+    }
+
+    if (error.code === '23502') {
+      throw new BadRequestException(`El campo '${error.column}' no puede ser nulo.`);
+    }
+
+    if (error.code === '23503') {
+      throw new BadRequestException('Referencia inválida: entidad relacionada no existe.');
+    }
+
+    if (error.code === '23514') {
+      throw new BadRequestException('Violación de restricción CHECK.');
+    }
+
+    if (error.code === '22P02') {
+      throw new BadRequestException('Formato de dato inválido.');
+    }
+
+    if (error instanceof NotFoundException) {
+      throw error;
+    }
+
+    if (error.status && error.status === 400) {
+      throw new BadRequestException(error.response || 'Solicitud incorrecta.');
+    }
+
+    this.logger.error(error);
+    throw new InternalServerErrorException('Ocurrió un error inesperado. Revisa los logs del servidor.');
+  }
+
+
 }

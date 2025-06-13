@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { CreateScanDto } from './dto/create-scan.dto';
 import { Scan } from './entities/scan.entity';
+import { CommonService } from 'src/common/common.service';
 
 
 @Injectable()
@@ -13,7 +14,8 @@ export class ScansService {
 
   constructor(
     @InjectRepository(Scan)
-    private readonly scanRepository: Repository<Scan>
+    private readonly scanRepository: Repository<Scan>,
+    private readonly commonService: CommonService
   ){}
 
   async create(createScanDto: CreateScanDto) {
@@ -25,7 +27,7 @@ export class ScansService {
       return scan;
 
     } catch (error) {
-      this.handleDBExceptions( error ); 
+      this.commonService.handleDBExceptions( error ); 
     }
   }
 
@@ -42,12 +44,5 @@ export class ScansService {
     return scan; 
   }
 
-  private handleDBExceptions( error:any ){
-    if( error.code === '23505' )
-      throw new BadRequestException(error.detail);
-
-    this.logger.error(error);
-    throw new InternalServerErrorException("Unexpected error, check server logs");
-  }
 
 }

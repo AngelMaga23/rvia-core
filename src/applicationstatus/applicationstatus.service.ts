@@ -31,7 +31,7 @@ export class ApplicationstatusService {
       return status;
 
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions(error);
     }
   }
 
@@ -49,7 +49,7 @@ export class ApplicationstatusService {
 
       return decryptedStatuses;
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions(error);
     }
 
   }
@@ -79,21 +79,13 @@ export class ApplicationstatusService {
       return statu;
 
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions(error);
     }
 
   }
 
   remove(id: number) {
     return `This action removes a #${id} applicationstatus`;
-  }
-
-  private handleDBExceptions(error: any) {
-    if (error.code === '23505')
-      throw new BadRequestException(error.detail);
-
-    this.logger.error(error);
-    throw new InternalServerErrorException("Unexpected error, check server logs");
   }
 
 }

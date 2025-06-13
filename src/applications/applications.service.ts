@@ -119,7 +119,7 @@ export class ApplicationsService {
       return aplicaciones;
 
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions(error);
     }
 
   }
@@ -143,7 +143,7 @@ export class ApplicationsService {
       return await this.processRepository(repoInfo.repoName, repoInfo.userName, user, file, createApplicationDto.num_accion, createApplicationDto.opc_lenguaje, 'GitHub', createApplicationDto.opc_arquitectura, createApplicationDto.idu_aplicacion_de_negocio);
 
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions(error);
     }
   }
 
@@ -157,7 +157,7 @@ export class ApplicationsService {
       return await this.processRepository(repoInfo.repoName, `${repoInfo.userName}/${repoInfo.groupName}`, user, file, createApplicationDto.num_accion, createApplicationDto.opc_lenguaje, 'GitLab', createApplicationDto.opc_arquitectura, createApplicationDto.idu_aplicacion_de_negocio);
 
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions(error);
     }
   }
 
@@ -551,7 +551,7 @@ export class ApplicationsService {
         await fsExtra.remove(tempZipPath);
         await fsExtra.remove(tempFolderPath);
       }
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions(error);
       throw error;
     }
   }
@@ -573,7 +573,7 @@ export class ApplicationsService {
       application.nom_aplicacion = this.encryptionService.decrypt(application.nom_aplicacion);
       return application;
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions(error);
     }
   }
 
@@ -608,7 +608,7 @@ export class ApplicationsService {
       };
 
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions(error);
     }
   }
 
@@ -641,7 +641,7 @@ export class ApplicationsService {
         rviaProcess
       };
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions(error);
     }
   }
 
@@ -673,7 +673,7 @@ export class ApplicationsService {
 
       return application;
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions(error);
     }
   }
 
@@ -704,7 +704,7 @@ export class ApplicationsService {
 
       return application;
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions(error);
     }
   }
 
@@ -815,14 +815,6 @@ export class ApplicationsService {
     readStream.on('error', (err) => {
       throw new BadRequestException(`Error al leer el archivo: ${err.message}`);
     });
-  }
-
-  private handleDBExceptions(error: any) {
-    if (error.code === '23505') throw new BadRequestException(error.detail);
-    if (error.response) throw new BadRequestException(error.message);
-
-    this.logger.error(error);
-    throw new InternalServerErrorException('Unexpected error, check server logs');
   }
 
 }

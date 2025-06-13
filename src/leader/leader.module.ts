@@ -7,11 +7,12 @@ import { PositionModule } from 'src/position/position.module';
 import { CentrosModule } from 'src/centros/centros.module';
 import { AppAreaModule } from 'src/app-area/app-area.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { CommonModule } from 'src/common/common.module';
 
 @Module({
   controllers: [LeaderController],
   providers: [LeaderService],
-  imports: [TypeOrmModule.forFeature([ Leader ]), PositionModule, CentrosModule, AppAreaModule, forwardRef(() => AuthModule)],
+  imports: [TypeOrmModule.forFeature([ Leader ]), PositionModule, CentrosModule, AppAreaModule, forwardRef(() => AuthModule),CommonModule],
   exports: [LeaderService],
 })
 export class LeaderModule {}

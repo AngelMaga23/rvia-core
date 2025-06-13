@@ -4,13 +4,19 @@ import { UpdateAppAreaDto } from './dto/update-app-area.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AppArea } from './entities/app-area.entity';
 import { Repository } from 'typeorm';
+import { CommonService } from 'src/common/common.service';
 
 @Injectable()
 export class AppAreaService {
 
   private readonly logger = new Logger('AppAreaService');
-  @InjectRepository(AppArea)
-  private readonly appAreaRepository: Repository<AppArea>
+
+  constructor(
+    @InjectRepository(AppArea)
+    private readonly appAreaRepository: Repository<AppArea>,
+    private readonly commonService: CommonService,
+  ) {}
+
 
   create(createAppAreaDto: CreateAppAreaDto) {
     return 'This action adds a new appArea';
@@ -28,7 +34,7 @@ export class AppAreaService {
   
       return aplicaciones;
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.commonService.handleDBExceptions(error);
     }
   }
 
@@ -44,7 +50,7 @@ export class AppAreaService {
         nom_app: app.nom_aplicacion,
       };
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.commonService.handleDBExceptions(error);
     }
   }
 
@@ -54,14 +60,5 @@ export class AppAreaService {
 
   remove(id: number) {
     return `This action removes a #${id} appArea`;
-  }
-
-  private handleDBExceptions( error: any ){
-    if( error.code === '23505' ){
-      throw new BadRequestException(error.detail);
-    }else{
-      this.logger.error(error);
-      throw new InternalServerErrorException('No se puede procesar la petición');
-    }
   }
 }
