@@ -43,6 +43,28 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     postgresql-contrib \
     libpq++-dev \
     libpq5 \
+    libasound2t64 \
+    libatk-bridge2.0-0t64 \
+    libatk1.0-0t64 \
+    libcups2t64 \
+    libgtk-3-0t64 \
+    libnspr4 \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxrandr2 \
+    libxss1 \
+    libxtst6 \
+    libappindicator3-1 \
+    libxshmfence1 \
+    libdbus-1-3 \
+    libdrm2 \
+    libgbm1 \
+    fonts-liberation \
+    ca-certificates \
+    xdg-utils \
+    vim \
+    bash \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Instalar CLI de Bito
@@ -85,9 +107,44 @@ RUN mkdir -p /sysx && \
 
 RUN chmod +x /app/bito_setup.sh
 
+RUN npm install -g @mermaid-js/mermaid-cli puppeteer && \
+    npx puppeteer browsers install chrome-headless-shell@131.0.6778.204 && \
+    npx puppeteer browsers install chrome-headless-shell@136.0.7103.94 
+
+RUN npm i -g md-to-pdf
+# Define la ruta real al ejecutable descargado
+ENV CHROME_BIN="/root/.cache/puppeteer/chrome-headless-shell/linux-131.0.6778.204/chrome-headless-shell-linux64/chrome-headless-shell"
+
+# Crear archivo puppeteer-config.json
+RUN mkdir -p /etc/puppeteer && \
+    echo '{ \
+      "executablePath": "/root/.cache/puppeteer/chrome-headless-shell/linux-131.0.6778.204/chrome-headless-shell-linux64/chrome-headless-shell", \
+      "args": ["--no-sandbox", "--disable-setuid-sandbox"] \
+    }' > /etc/puppeteer/config.json
+
+RUN mkdir -p /etc/md-to-pdf && \
+    echo "module.exports = {" \
+         "  launch_options: {" \
+         "    executablePath: \"/root/.cache/puppeteer/chrome-headless-shell/linux-136.0.7103.94/chrome-headless-shell-linux64/chrome-headless-shell\"," \
+         "    args: [\"--no-sandbox\", \"--disable-setuid-sandbox\"]" \
+         "  }" \
+         "}" > /etc/md-to-pdf/config.js
+
+# Crear wrapper mmdc apuntando al archivo real de mmdc usando readlink -f
+RUN MMDC_PATH=$(readlink -f $(which mmdc)) && \
+    echo '#!/bin/sh' > /usr/local/bin/mmdc && \
+    echo "exec node $MMDC_PATH --puppeteerConfigFile /etc/puppeteer/config.json \"\$@\"" >> /usr/local/bin/mmdc && \
+    chmod +x /usr/local/bin/mmdc
+
+RUN MD2PDF_PATH=$(readlink -f $(which md-to-pdf)) && \
+    echo '#!/bin/sh' > /usr/local/bin/md-to-pdf && \
+    echo "exec node $MD2PDF_PATH --config-file /etc/md-to-pdf/config.js \"\$@\"" >> /usr/local/bin/md-to-pdf && \
+    chmod +x /usr/local/bin/md-to-pdf
+
+
+
 # Exponer el puerto donde la aplicación escuchará
 EXPOSE 3001
 
 # Comando para iniciar la aplicación
 CMD ["/bin/sh", "-c", "./bito_setup.sh && node dist/main.js"]
-

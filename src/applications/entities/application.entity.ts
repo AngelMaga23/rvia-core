@@ -51,6 +51,12 @@ export class Application {
     @Type(() => Number)
     opc_estatus_calificar: number;
 
+
+    @Column()
+    @IsNumber()
+    @Type(() => Number)
+    opc_estatus_dim: number;
+
     @Column()
     @IsNumber()
     @Type(() => Number)

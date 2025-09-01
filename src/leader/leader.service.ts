@@ -73,7 +73,7 @@ export class LeaderService {
     const nivel = (puesto as Position).num_puesto;
     let encargados = [];
   
-    if (nivel !== 1) {
+    if (nivel != 1) {
       const nivelSuperior = nivel - 1;
       const puestoSuperior = await this.puestosService.findByLevel(nivelSuperior);
   
