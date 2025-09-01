@@ -39,10 +39,10 @@ import { envs } from 'src/config';
 
 const addonAct = require(envs.rviaactPath);
 const addonSan = require(envs.rviasaPath);
-// const addonDim = require(envs.rviadimPath);
+const addonDim = require(envs.rviadimPath);
 const addonDoc = require(envs.rviadocPath);
 const addonDof = require(envs.rviadofPath);
-// const addonCap = require(envs.rviacapPath);
+const addonCap = require(envs.rviacapPath);
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -788,9 +788,13 @@ export class ApplicationsService {
         return addonDof.coreIA.getIDProjectDOF();
       }
 
-      // if (opc_arquitectura["3"]) {
-      //   return addonCap.coreIA.getIDProjectCAP();
-      // }
+      if (opc_arquitectura["3"]) {
+        return addonCap.coreIA.getIDProjectCAP();
+      }
+
+      if (opc_arquitectura["5"]) {
+        return addonDim.coreIA.getIDProjectDIM();
+      }
   
       throw new BadRequestException('Es necesario seleccionar una opción de arquitectura');
     }

@@ -15,7 +15,7 @@ import { Worker } from 'worker_threads';
 const addonSAN = require(envs.rviasaPath);
 const addonACT = require(envs.rviaactPath);
 const addonDIM = require(envs.rviadimPath);
-// const addonCAP = require(envs.rviacapPath);
+const addonCAP = require(envs.rviacapPath);
 const addonDOC = require(envs.rviadocPath);
 const addonDOF = require(envs.rviadofPath);
 
@@ -165,7 +165,7 @@ export class RviaService {
     const versionDim = await addonDIM.coreIA.getVersionDIM();
     const versionDoc = await addonDOC.coreIA.getVersionDOC();
     const versionDof = await addonDOF.coreIA.getVersionDOF();
-    // const versionCap = await addonCAP.coreIA.getVersionCAP();
+    const versionCap = await addonCAP.coreIA.getVersionCAP();
 
     // return  addon.coreIA.getVersionACT();
     return {
@@ -174,7 +174,7 @@ export class RviaService {
       versionDim,
       versionDoc,
       versionDof,
-      "versionCap": "0.0.0"
+      versionCap
     };
 
   }
