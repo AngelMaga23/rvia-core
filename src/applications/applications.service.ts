@@ -13,6 +13,9 @@ import { promisify } from 'util';
 import { pipeline } from 'stream';
 import * as fsExtra from 'fs-extra';
 import { promises as fs } from 'fs';
+import dayjs  from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 
 import { CreateApplicationDto, CreateFileDto } from './dto';
 import { Application } from './entities/application.entity';
@@ -40,6 +43,9 @@ const addonSan = require(envs.rviasaPath);
 const addonDoc = require(envs.rviadocPath);
 const addonDof = require(envs.rviadofPath);
 // const addonCap = require(envs.rviacapPath);
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 @Injectable()
 export class ApplicationsService {
@@ -98,6 +104,10 @@ export class ApplicationsService {
           0
         );
 
+        (aplicacion as any).fec_creacion = dayjs(aplicacion.fec_creacion)
+          .tz('America/Mexico_City')
+          .format('DD/MM/YYYY - HH:mm');
+
         if (aplicacion.checkmarx && aplicacion.checkmarx.length > 0){
           aplicacion.checkmarx.forEach(checkmarx => { 
             checkmarx.nom_checkmarx = this.encryptionService.decrypt(checkmarx.nom_checkmarx);
@@ -109,7 +119,7 @@ export class ApplicationsService {
       return aplicaciones;
 
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions(error);
     }
 
   }
@@ -133,7 +143,7 @@ export class ApplicationsService {
       return await this.processRepository(repoInfo.repoName, repoInfo.userName, user, file, createApplicationDto.num_accion, createApplicationDto.opc_lenguaje, 'GitHub', createApplicationDto.opc_arquitectura, createApplicationDto.idu_aplicacion_de_negocio);
 
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions(error);
     }
   }
 
@@ -147,7 +157,7 @@ export class ApplicationsService {
       return await this.processRepository(repoInfo.repoName, `${repoInfo.userName}/${repoInfo.groupName}`, user, file, createApplicationDto.num_accion, createApplicationDto.opc_lenguaje, 'GitLab', createApplicationDto.opc_arquitectura, createApplicationDto.idu_aplicacion_de_negocio);
 
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions(error);
     }
   }
 
@@ -545,7 +555,7 @@ export class ApplicationsService {
         await fsExtra.remove(tempZipPath);
         await fsExtra.remove(tempFolderPath);
       }
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions(error);
       throw error;
     }
   }
@@ -567,7 +577,7 @@ export class ApplicationsService {
       application.nom_aplicacion = this.encryptionService.decrypt(application.nom_aplicacion);
       return application;
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions(error);
     }
   }
 
@@ -602,7 +612,7 @@ export class ApplicationsService {
       };
 
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions(error);
     }
   }
 
@@ -635,7 +645,7 @@ export class ApplicationsService {
         rviaProcess
       };
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions(error);
     }
   }
 
@@ -667,7 +677,7 @@ export class ApplicationsService {
 
       return application;
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions(error);
     }
   }
 
@@ -698,7 +708,7 @@ export class ApplicationsService {
 
       return application;
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.encryptionService.handleDBExceptions(error);
     }
   }
 
@@ -809,14 +819,6 @@ export class ApplicationsService {
     readStream.on('error', (err) => {
       throw new BadRequestException(`Error al leer el archivo: ${err.message}`);
     });
-  }
-
-  private handleDBExceptions(error: any) {
-    if (error.code === '23505') throw new BadRequestException(error.detail);
-    if (error.response) throw new BadRequestException(error.message);
-
-    this.logger.error(error);
-    throw new InternalServerErrorException('Unexpected error, check server logs');
   }
 
 }

@@ -4,7 +4,7 @@ import { Sourcecode } from '../../sourcecode/entities/sourcecode.entity';
 import { Scan } from '../../scans/entities/scan.entity';
 import { User } from '../../auth/entities/user.entity';
 import { UsersApplication } from "src/users-applications/entities/users-application.entity";
-import { IsNumber } from "class-validator";
+import { IsDate, IsNumber } from "class-validator";
 import { Type } from "class-transformer";
 import { Checkmarx } from "src/checkmarx/entities/checkmarx.entity";
 import { Cost } from "src/cost/entities/cost.entity";
@@ -102,5 +102,8 @@ export class Application {
 
     @OneToMany(() => Cost, cost => cost.application)
     cost: Cost[];
+
+    @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+    fec_creacion: Date;
 
 }

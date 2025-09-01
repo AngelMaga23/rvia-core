@@ -8,7 +8,7 @@ export class CreateCentroDto {
     nom_centro: string;
 
     @IsNumber()
-    @Transform(({ value }) => parseInt(value, 6))
+    @Transform(({ value }) => Number(value))
     num_centro: number;
 
 }

@@ -4,6 +4,7 @@ import { UpdateCentroDto } from './dto/update-centro.dto';
 import { Centro } from './entities/centro.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CommonService } from 'src/common/common.service';
 
 @Injectable()
 export class CentrosService {
@@ -13,11 +14,23 @@ export class CentrosService {
   constructor(
     @InjectRepository(Centro)
     private readonly centroRepository: Repository<Centro>,
+    private readonly commonService: CommonService,
 
   ){}
 
-  create(createCentroDto: CreateCentroDto) {
-    return 'This action adds a new centro';
+  async create(createCentroDto: CreateCentroDto) {
+    try {
+        
+
+      const centro = this.centroRepository.create(createCentroDto);
+      await this.centroRepository.save(centro);
+
+      return centro;
+
+   } catch (error) {
+      console.log(error)
+      this.commonService.handleDBExceptions( error );
+   }
   }
 
   async findAll() {
@@ -31,7 +44,7 @@ export class CentrosService {
       return centros;
 
     } catch (error) {
-      this.handleDBExceptions( error );
+      this.commonService.handleDBExceptions( error );
     }
 
   }
@@ -48,7 +61,7 @@ export class CentrosService {
         nom_centro: centro.nom_centro,
       };
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.commonService.handleDBExceptions( error );
     }
   }
   
@@ -60,12 +73,4 @@ export class CentrosService {
   remove(id: number) {
     return `This action removes a #${id} centro`;
   }
-
-    private handleDBExceptions( error:any ){
-      if( error.code === '23505' )
-        throw new BadRequestException(error.detail);
-  
-      this.logger.error(error);
-      throw new InternalServerErrorException("Unexpected error, check server logs");
-    }
 }

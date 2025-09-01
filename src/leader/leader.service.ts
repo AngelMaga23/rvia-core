@@ -8,6 +8,7 @@ import { PositionService } from 'src/position/position.service';
 import { Position } from 'src/position/entities/position.entity';
 import { CentrosService } from 'src/centros/centros.service';
 import { AppAreaService } from 'src/app-area/app-area.service';
+import { CommonService } from 'src/common/common.service';
 
 @Injectable()
 export class LeaderService {
@@ -20,6 +21,7 @@ export class LeaderService {
     private readonly puestosService: PositionService,
     private readonly centrosService: CentrosService,
     private readonly appAreaService: AppAreaService,
+    private readonly commonService: CommonService,
   ){} 
 
   async create(createLeaderDto: CreateLeaderDto) {
@@ -32,7 +34,7 @@ export class LeaderService {
 
       return encargado;
     } catch (error) {
-      this.handleDBExceptions( error );
+      this.commonService.handleDBExceptions( error );
     }
 
   }
@@ -44,7 +46,7 @@ export class LeaderService {
       return encargado;
 
     } catch (error) {
-      this.handleDBExceptions( error );
+      this.commonService.handleDBExceptions( error );
     }
   }
 
@@ -59,7 +61,7 @@ export class LeaderService {
       return encargado;
 
     } catch (error) {
-      this.handleDBExceptions( error );
+      this.commonService.handleDBExceptions( error );
     }
   }
 
@@ -123,7 +125,7 @@ export class LeaderService {
       return {encargados};
 
     } catch (error) {
-      this.handleDBExceptions( error );
+      this.commonService.handleDBExceptions( error );
     }
   }
   async update(id: number, updateLeaderDto: UpdateLeaderDto) {
@@ -142,7 +144,7 @@ export class LeaderService {
       return encargado;
 
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.commonService.handleDBExceptions( error );
     }
   }
 
@@ -150,12 +152,5 @@ export class LeaderService {
     return `This action removes a #${id} leader`;
   }
 
-  private handleDBExceptions( error:any ){
-    if( error.code === '23505' )
-      throw new BadRequestException(error.detail);
-
-    this.logger.error(error);
-    throw new InternalServerErrorException("Unexpected error, check server logs");
-  }
   
 }
