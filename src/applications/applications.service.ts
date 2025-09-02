@@ -253,13 +253,12 @@ export class ApplicationsService {
       application.idu_proyecto = iduProject;
       application.num_accion = numAccion;
       application.idu_aplicacion_de_negocio = idu_aplicacion_de_negocio;
-      application.opc_arquitectura = opcArquitectura || {"1": false, "2": false, "3": false, "4": false, "5": false};
+      application.opc_arquitectura = opcArquitectura || {"1": false, "2": false, "3": false, "4": false};
       application.opc_lenguaje = opcLenguaje;
       application.opc_estatus_doc = opcArquitectura['1'] ? 2 : 0;
       application.opc_estatus_doc_code = opcArquitectura['2'] ? 2 : 0;
       application.opc_estatus_caso = opcArquitectura['3'] ? 2 : 0;
       application.opc_estatus_calificar = opcArquitectura['4'] ? 2 : 0;
-      application.opc_estatus_dim = opcArquitectura['5'] ? 2 : 0;
       application.applicationstatus = estatu;
       application.sourcecode = sourcecode;
       application.user = user;
@@ -452,14 +451,13 @@ export class ApplicationsService {
       application.idu_proyecto = iduProject;
       application.num_accion = createFileDto.num_accion;
       application.idu_aplicacion_de_negocio = createFileDto.idu_aplicacion_de_negocio;
-      application.opc_arquitectura = createFileDto.opc_arquitectura || {"1": false, "2": false, "3": false, "4": false, "5": false};
+      application.opc_arquitectura = createFileDto.opc_arquitectura || {"1": false, "2": false, "3": false, "4": false};
       application.opc_lenguaje = createFileDto.opc_lenguaje;
       // Array.isArray(aplicacion.opc_arquitectura) && aplicacion.opc_arquitectura.length > 1 ? aplicacion.opc_arquitectura[1]
       application.opc_estatus_doc = opciones['1'] ? 2 : 0;
       application.opc_estatus_doc_code = opciones['2'] ? 2 : 0;
       application.opc_estatus_caso = opciones['3'] ? 2 : 0;
       application.opc_estatus_calificar = opciones['4'] ? 2 : 0;
-      application.opc_estatus_dim = opciones['5'] ? 2 : 0;
       application.applicationstatus = estatu;
       application.sourcecode = sourcecode;
       application.user = user;
@@ -511,29 +509,27 @@ export class ApplicationsService {
         // }
       }
 
+      const actionsMap: Record<number, (app: any) => Promise<any>> = {
+        1: (app) => this.rviaService.ApplicationInitActProcess(app),
+        5: (app) => this.rviaService.ApplicationInitDimProcess(app),
+      };
+
       if( createFileDto.num_accion === 1 ){
         rviaProcess = await this.rviaService.ApplicationInitActProcess(application);
       }
 
-
-
-      if( createFileDto.num_accion === 0 ){
-        if(createFileDto.opc_arquitectura[1]){
+      if (createFileDto.num_accion === 0) {
+        if (createFileDto.opc_arquitectura[1]) {
           rviaProcess = await this.rviaService.ApplicationInitDocProcess(application);
         }
-
-        if(createFileDto.opc_arquitectura[2]){
+        if (createFileDto.opc_arquitectura[2]) {
           rviaProcess = await this.rviaService.ApplicationInitDofProcess(application);
         }
-
-        if(createFileDto.opc_arquitectura[3]){
+        if (createFileDto.opc_arquitectura[3]) {
           rviaProcess = await this.rviaService.ApplicationInitCapProcess(application);
         }
-
-        if( createFileDto.opc_arquitectura[5] ){
-          rviaProcess = await this.rviaService.ApplicationInitDimProcess(application);
-        }
-
+      } else if (actionsMap[createFileDto.num_accion]) {
+        rviaProcess = await actionsMap[createFileDto.num_accion](application);
       }
 
       application.nom_aplicacion = this.encryptionService.decrypt(application.nom_aplicacion);
