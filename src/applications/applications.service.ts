@@ -511,7 +511,7 @@ export class ApplicationsService {
 
       const actionsMap: Record<number, (app: any) => Promise<any>> = {
         1: (app) => this.rviaService.ApplicationInitActProcess(app),
-        5: (app) => this.rviaService.ApplicationInitDimProcess(app),
+        4: (app) => this.rviaService.ApplicationInitDimProcess(app),
       };
 
       if( createFileDto.num_accion === 1 ){

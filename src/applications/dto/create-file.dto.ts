@@ -5,7 +5,7 @@ export class CreateFileDto {
 
     @IsNumber()
     @Transform(({ value }) => parseInt(value, 10))
-    @IsIn([0,1, 2, 3], {
+    @IsIn([0,1, 2, 3, 4], {
         message: 'El valor de num_accion debe ser 0, 1, 2 o 3',
     })
     num_accion: number;
