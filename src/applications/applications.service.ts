@@ -84,8 +84,10 @@ export class ApplicationsService {
       .leftJoinAndSelect('application.user', 'user')
       .orderBy('application.fec_creacion', 'ASC');
 
+      queryBuilder.where('application.num_accion != :accion', { accion: 4 });
+
       if (user.position?.nom_rol !== ValidRoles.admin) {
-        queryBuilder.where('application.user = :userId', { userId: user.idu_usuario });
+        queryBuilder.andWhere('application.user = :userId', { userId: user.idu_usuario });
       }
 
       const aplicaciones = await queryBuilder.getMany();
