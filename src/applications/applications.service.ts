@@ -36,6 +36,7 @@ import { CreateDocumentationCodigo } from './dto/create-documentation-cod.dto';
 import { ConfigService } from '@nestjs/config';
 import { RviaService } from 'src/rvia/rvia.service';
 import { envs } from 'src/config';
+import { RegistraTotales } from './entities/registra-total.entity';
 
 const addonAct = require(envs.rviaactPath);
 const addonSan = require(envs.rviasaPath);
@@ -68,6 +69,8 @@ export class ApplicationsService {
     private readonly configService: ConfigService,
     @Inject(forwardRef(() => RviaService))
     private readonly rviaService: RviaService,
+    @InjectRepository(RegistraTotales)
+    private readonly registraTotalesRepository: Repository<RegistraTotales>,
   ) {
     this.crviaEnvironment = envs.rviaEnv;
   }
@@ -877,6 +880,53 @@ export class ApplicationsService {
     readStream.on('error', (err) => {
       throw new BadRequestException(`Error al leer el archivo: ${err.message}`);
     });
+  }
+
+  async getDataReport(id: string) {
+
+    try {
+
+      const application = await this.applicationRepository
+        .createQueryBuilder('application')
+        .leftJoin('application.user', 'user')
+        .select([
+          'application.idu_proyecto AS id_proyecto',
+          'application.nom_aplicacion AS nom_aplicacion',
+          'application.fec_creacion AS fec_creacion',
+          'user.num_empleado AS num_empleado',
+          'user.nom_correo AS nom_correo',
+          'user.nom_usuario AS nom_usuario',
+          'user.num_centro AS num_centro',
+        ])
+        .where('application.idu_proyecto = :id', { id })
+        .getRawOne();
+
+
+      if (application) {
+        application.nom_aplicacion = this.encryptionService.decrypt(application.nom_aplicacion);
+        application.nom_correo = this.encryptionService.decrypt(application.nom_correo);
+        application.nom_usuario = this.encryptionService.decrypt(application.nom_usuario);
+
+        (application as any).fec_creacion = dayjs(application.fec_creacion)
+          .tz('America/Mexico_City')
+          .format('DD/MM/YYYY - HH:mm');
+      }
+
+
+      const registro = await this.registraTotalesRepository.find({
+        select: ['nom_proyecto', 'nom_language','num_files','num_blank','num_comment'],
+        where: { id_proyecto: id }
+      });
+
+      return {
+        "aplicacion":application, 
+        "archivos":registro
+      };
+
+    } catch (error) {
+      this.encryptionService.handleDBExceptions(error);
+    }
+
   }
 
 }

@@ -225,4 +225,13 @@ export class ApplicationsController {
     await this.applicationsService.getStaticFileDoc7z(id, res);
   }
 
+  @Get('report-dim/:id')
+  @Auth(ValidRoles.admin, ValidRoles.user)
+  async reportData(
+    // @GetUser() user: User,
+    @Param('id') id: string
+  ) {
+    return await this.applicationsService.getDataReport(id);
+  }
+
 }

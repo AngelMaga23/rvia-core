@@ -13,12 +13,13 @@ import { CommonModule } from 'src/common/common.module';
 import { ScansModule } from 'src/scans/scans.module';
 import { CheckmarxModule } from 'src/checkmarx/checkmarx.module';
 import { RviaModule } from 'src/rvia/rvia.module';
+import { RegistraTotales } from './entities/registra-total.entity';
 
 @Module({
   controllers: [ApplicationsController],
   providers: [ApplicationsService],
   imports:[
-    TypeOrmModule.forFeature([ Application ]),
+    TypeOrmModule.forFeature([ Application,RegistraTotales ]),
     ApplicationstatusModule,
     SourcecodeModule,
     HttpModule,
