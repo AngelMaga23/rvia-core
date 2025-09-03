@@ -826,9 +826,9 @@ export class ApplicationsService {
       return addonSan.coreIA.getIDProjectSAN();
     }
 
-    // if (num_accion === 4) {
-    //   return addonDim.coreIA.getIDProjectDIM();
-    // }
+    if (num_accion === 4) {
+      return addonDim.coreIA.getIDProjectDIM();
+    }
   
     if (num_accion === 0) {
       const tieneOpcionTrue = Object.values(opc_arquitectura).some(v => v === true);
@@ -847,10 +847,6 @@ export class ApplicationsService {
 
       if (opc_arquitectura["3"]) {
         return addonCap.coreIA.getIDProjectCAP();
-      }
-
-      if (opc_arquitectura["5"]) {
-        return addonDim.coreIA.getIDProjectDIM();
       }
   
       throw new BadRequestException('Es necesario seleccionar una opción de arquitectura');
