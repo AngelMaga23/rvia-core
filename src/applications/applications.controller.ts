@@ -37,6 +37,12 @@ export class ApplicationsController {
     return this.applicationsService.findAll(user);
   }
 
+  @Get('dim')
+  @Auth(ValidRoles.admin, ValidRoles.user)
+  findDim(@GetUser() user: User) {
+    return this.applicationsService.findDim(user);
+  }
+
   @Post('git')
   @Auth(ValidRoles.admin, ValidRoles.autorizador, ValidRoles.user)
   @ApiConsumes('multipart/form-data')

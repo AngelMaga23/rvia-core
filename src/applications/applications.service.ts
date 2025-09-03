@@ -124,6 +124,62 @@ export class ApplicationsService {
 
   }
 
+  async findDim(user: User) {
+
+    try {
+
+      const queryBuilder = this.applicationRepository.createQueryBuilder('application')
+      .leftJoinAndSelect('application.checkmarx', 'checkmarx')
+      .leftJoinAndSelect('application.cost', 'cost')
+      .leftJoinAndSelect('application.applicationstatus', 'applicationstatus')
+      .leftJoinAndSelect('application.sourcecode', 'sourcecode')
+      .leftJoinAndSelect('application.user', 'user')
+      .orderBy('application.fec_creacion', 'ASC');
+
+      queryBuilder.where('application.num_accion = :accion', { accion: 4 });
+
+      if (user.position?.nom_rol !== ValidRoles.admin) {
+        queryBuilder.andWhere('application.user = :userId', { userId: user.idu_usuario });  
+      }
+
+
+      const aplicaciones = await queryBuilder.getMany();
+
+
+      aplicaciones.forEach((aplicacion, index) => {
+        aplicacion.nom_aplicacion = this.encryptionService.decrypt(aplicacion.nom_aplicacion);
+        aplicacion.applicationstatus.des_estatus_aplicacion = this.encryptionService.decrypt(aplicacion.applicationstatus.des_estatus_aplicacion);
+        aplicacion.sourcecode.nom_codigo_fuente = this.encryptionService.decrypt(aplicacion.sourcecode.nom_codigo_fuente);
+        aplicacion.sourcecode.nom_directorio = this.encryptionService.decrypt(aplicacion.sourcecode.nom_directorio);
+        aplicacion.user.nom_usuario = this.encryptionService.decrypt(aplicacion.user.nom_usuario);
+
+        (aplicacion as any).sequentialId = index + 1;
+        (aplicacion as any).totalCost = aplicacion.cost.reduce<number>(
+          (sum, cost) => sum + (cost.val_monto ? parseFloat(cost.val_monto) : 0),
+          0
+        );
+
+        (aplicacion as any).fec_creacion = dayjs(aplicacion.fec_creacion)
+          .tz('America/Mexico_City')
+          .format('DD/MM/YYYY - HH:mm');
+
+        if (aplicacion.checkmarx && aplicacion.checkmarx.length > 0){
+          aplicacion.checkmarx.forEach(checkmarx => { 
+            checkmarx.nom_checkmarx = this.encryptionService.decrypt(checkmarx.nom_checkmarx);
+          });
+        }
+
+      });
+
+      return aplicaciones;
+
+    } catch (error) {
+      this.encryptionService.handleDBExceptions(error);
+    }
+
+  }
+
+
   async findOne(id: number) {
     const aplicacion = await this.applicationRepository.findOneBy({ idu_aplicacion: id });
 
