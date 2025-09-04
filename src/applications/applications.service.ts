@@ -814,7 +814,7 @@ export class ApplicationsService {
     num_accion: number,
     opc_arquitectura: Record<string, boolean>
   ): string {
-    if (![0, 1, 2, 3].includes(num_accion)) {
+    if (![0, 1, 2, 3,4].includes(num_accion)) {
       throw new BadRequestException('num_accion debe ser 0, 1, 2 o 3');
     }
   
