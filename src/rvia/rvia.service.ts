@@ -137,7 +137,7 @@ export class RviaService {
   async ApplicationInitDimProcess(aplicacion: Application) {
     const args = this.buildWorkerArgs(aplicacion);
     await this.fireAndForgetProcess(args, this.workerService.runInitDimProcess.bind(this.workerService), 'DIM');
-    return { isValidProcess: true, messageRVIA: "Proceso IA Iniciado Correctamente" };
+    return { isValidProcess: true, messageRVIA: "Inició el proceso Correctamente" };
   }
 
   async ApplicationInitDocProcess(aplicacion: Application) {
