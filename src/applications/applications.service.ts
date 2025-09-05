@@ -920,9 +920,27 @@ export class ApplicationsService {
         where: { id_proyecto: id }
       });
 
+      const total_consultas = await this.applicationRepository
+      .createQueryBuilder('application')
+      .leftJoin(
+        'tbl_registra_totales',
+        'registraTotales',
+        'registraTotales.id_proyecto = application.idu_proyecto'
+      )
+      .select('SUM(registraTotales.num_files)', 'totalFiles')
+      .where('application.idu_proyecto = :id_proyecto', { id_proyecto:id })
+      .getRawOne();
+
+      const costo_token = await this.costService.getDataConfig();
+
       return {
         "aplicacion":application, 
-        "archivos":registro
+        "archivos":registro,
+        "total_consultas": total_consultas ? Number(total_consultas.totalFiles) : 0,
+        "costo_token": {
+          "consto_token": costo_token ? Number(costo_token.costoPorConsulta) : 0,
+          "consto_token_extra": costo_token ? Number(costo_token.costoPorConsultaExtra) : 0,
+        }
       };
 
     } catch (error) {

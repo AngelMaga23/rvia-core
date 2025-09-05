@@ -42,6 +42,16 @@ export class CostService {
     return `This action removes a #${id} cost`;
   }
 
+  async getDataConfig(){
+    const costoToken = await this.costoTokenRepository.find({});
+
+    if (costoToken.length === 0) {
+      throw new Error('No se encontró la configuración de costos.');
+    }
+
+    return costoToken[0];
+  }
+
   async calculoCosto(id_proyecto: string, cant_archivos: number, total_archivos: number, num_empleado: string, nom_proyecto: string) {
 
     const costoTokens = await this.costoTokenRepository.find({});
