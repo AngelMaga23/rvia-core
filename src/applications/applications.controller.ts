@@ -38,7 +38,7 @@ export class ApplicationsController {
   }
 
   @Get('dim')
-  @Auth(ValidRoles.admin, ValidRoles.user)
+  @Auth(ValidRoles.admin, ValidRoles.autorizador, ValidRoles.user)
   findDim(@GetUser() user: User) {
     return this.applicationsService.findDim(user);
   }
@@ -226,7 +226,7 @@ export class ApplicationsController {
   }
 
   @Get('report-dim/:id')
-  @Auth(ValidRoles.admin, ValidRoles.user)
+  @Auth(ValidRoles.admin, ValidRoles.autorizador, ValidRoles.user)
   async reportData(
     // @GetUser() user: User,
     @Param('id') id: string
