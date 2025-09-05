@@ -938,8 +938,8 @@ export class ApplicationsService {
         "archivos":registro,
         "total_consultas": total_consultas ? Number(total_consultas.totalFiles) : 0,
         "costo_token": {
-          "consto_token": costo_token ? Number(costo_token.costoPorConsulta) : 0,
-          "consto_token_extra": costo_token ? Number(costo_token.costoPorConsultaExtra) : 0,
+          "costo_token": costo_token ? Number(costo_token.costoPorConsulta) : 0,
+          "costo_token_extra": costo_token ? Number(costo_token.costoPorConsultaExtra) : 0,
         }
       };
 
