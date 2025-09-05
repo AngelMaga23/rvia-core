@@ -5,6 +5,8 @@ import { ApplicationsModule } from 'src/applications/applications.module';
 import { CommonModule } from 'src/common/common.module';
 import { CheckmarxModule } from 'src/checkmarx/checkmarx.module';
 import { WorkerService } from './worker.service';
+import { Cost } from 'src/cost/entities/cost.entity';
+import { CostModule } from 'src/cost/cost.module';
 
 @Module({
   controllers: [RviaController],
@@ -13,6 +15,7 @@ import { WorkerService } from './worker.service';
     forwardRef(() => ApplicationsModule),
     CommonModule,
     forwardRef(() => CheckmarxModule),
+    CostModule
   ],
   exports:[ RviaService ]
 })

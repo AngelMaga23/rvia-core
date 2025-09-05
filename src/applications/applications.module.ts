@@ -14,6 +14,7 @@ import { ScansModule } from 'src/scans/scans.module';
 import { CheckmarxModule } from 'src/checkmarx/checkmarx.module';
 import { RviaModule } from 'src/rvia/rvia.module';
 import { RegistraTotales } from './entities/registra-total.entity';
+import { CostModule } from 'src/cost/cost.module';
 
 @Module({
   controllers: [ApplicationsController],
@@ -28,6 +29,7 @@ import { RegistraTotales } from './entities/registra-total.entity';
     ScansModule,
     forwardRef(() => CheckmarxModule),
     forwardRef(() => RviaModule),
+    CostModule
   ],
   exports:[ ApplicationsService,TypeOrmModule ]
 })

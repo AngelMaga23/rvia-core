@@ -11,6 +11,7 @@ import { Application } from 'src/applications/entities/application.entity';
 import { envs } from 'src/config';
 import { WorkerService } from './worker.service';
 import { Worker } from 'worker_threads';
+import { CostService } from 'src/cost/cost.service';
 
 const addonSAN = require(envs.rviasaPath);
 const addonACT = require(envs.rviaactPath);
@@ -32,7 +33,8 @@ export class RviaService {
     @Inject(forwardRef(() => CheckmarxService))
     private readonly checkmarxService: CheckmarxService,
     private readonly configService: ConfigService,
-    private readonly workerService: WorkerService
+    private readonly workerService: WorkerService,
+    private readonly costService: CostService
   ) {
     this.crviaEnvironment = envs.rviaEnv;
   }
@@ -121,6 +123,21 @@ export class RviaService {
       .catch(error => this.logger.error(`Error en el Worker (${processName}):`, error));
   }
 
+  private async fireAndForgetProcessDIM(
+      args: any[],
+      workerFn: (args: any[]) => Promise<any>,
+      processName: string
+    ): Promise<any> {
+      try {
+        const result = await workerFn(args);
+        this.logger.debug(`Proceso ${processName} Finalizado con código: ${result}`);
+        return result;
+      } catch (error) {
+        this.logger.error(`Error en el Worker (${processName}):`, error);
+        throw error;
+      }
+  }
+
   async ApplicationInitSanProcess(aplicacion: Application) {
     const args = this.buildWorkerArgs(aplicacion);
     await this.fireAndForgetProcess(args, this.workerService.runInitSanProcess.bind(this.workerService), 'SAN');
@@ -136,7 +153,16 @@ export class RviaService {
 
   async ApplicationInitDimProcess(aplicacion: Application) {
     const args = this.buildWorkerArgs(aplicacion);
-    await this.fireAndForgetProcess(args, this.workerService.runInitDimProcess.bind(this.workerService), 'DIM');
+    const result = await this.fireAndForgetProcessDIM(args, this.workerService.runInitDimProcess.bind(this.workerService), 'DIM');
+    
+    if (result !== 1) {
+      throw new Error(`No finalizó correctamente. Código: ${result}`);
+    }
+
+    const file = await this.applicationService.getTotalFiles(aplicacion.idu_proyecto);
+    
+    await this.costService.calculoCosto(aplicacion.idu_proyecto, file.totalAplicacion, file.totalAplicaciones, aplicacion.user.num_empleado.toString(), aplicacion.nom_aplicacion);
+
     return { isValidProcess: true, messageRVIA: "Inició el proceso Correctamente" };
   }
 

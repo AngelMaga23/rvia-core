@@ -37,6 +37,7 @@ import { ConfigService } from '@nestjs/config';
 import { RviaService } from 'src/rvia/rvia.service';
 import { envs } from 'src/config';
 import { RegistraTotales } from './entities/registra-total.entity';
+import { CostService } from 'src/cost/cost.service';
 
 const addonAct = require(envs.rviaactPath);
 const addonSan = require(envs.rviasaPath);
@@ -71,6 +72,7 @@ export class ApplicationsService {
     private readonly rviaService: RviaService,
     @InjectRepository(RegistraTotales)
     private readonly registraTotalesRepository: Repository<RegistraTotales>,
+    private readonly costService: CostService,
   ) {
     this.crviaEnvironment = envs.rviaEnv;
   }
@@ -885,6 +887,7 @@ export class ApplicationsService {
       const application = await this.applicationRepository
         .createQueryBuilder('application')
         .leftJoin('application.user', 'user')
+        .leftJoin('application.cost', 'cost')
         .select([
           'application.idu_proyecto AS id_proyecto',
           'application.nom_aplicacion AS nom_aplicacion',
@@ -893,6 +896,9 @@ export class ApplicationsService {
           'user.nom_correo AS nom_correo',
           'user.nom_usuario AS nom_usuario',
           'user.num_centro AS num_centro',
+          'cost.nom_cliente_ia AS nom_cliente_ia',
+          'cost.val_monto AS val_monto',
+          'cost.des_descripcion AS des_descripcion',
         ])
         .where('application.idu_proyecto = :id', { id })
         .getRawOne();
@@ -924,5 +930,41 @@ export class ApplicationsService {
     }
 
   }
+
+async getTotalFiles(id_proyecto: string) {
+  const today = new Date();
+  const startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+  const endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+  // Total incluyendo todo
+  const aplicacion = await this.applicationRepository
+    .createQueryBuilder('application')
+    .leftJoin(
+      'tbl_registra_totales',
+      'registraTotales',
+      'registraTotales.id_proyecto = application.idu_proyecto'
+    )
+    .select('SUM(registraTotales.num_files)', 'totalFiles')
+    .where('application.idu_proyecto = :id_proyecto', { id_proyecto })
+    .getRawOne();
+
+
+  const aplicaciones = await this.applicationRepository
+    .createQueryBuilder('application')
+    .leftJoin(
+      'tbl_registra_totales',
+      'registraTotales',
+      'registraTotales.id_proyecto = application.idu_proyecto'
+    )
+    .select('SUM(registraTotales.num_files)', 'totalFiles')
+    .andWhere('application.num_accion != :num_accion', { num_accion: 4 })
+    .andWhere('application.fec_creacion BETWEEN :startDate AND :endDate', { startDate, endDate })
+    .getRawOne();
+
+  return {
+    totalAplicacion: Number(aplicacion?.totalFiles ?? 0),
+    totalAplicaciones: Number(aplicaciones?.totalFiles ?? 0),
+  };
+}
 
 }
