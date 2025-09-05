@@ -916,7 +916,7 @@ export class ApplicationsService {
 
 
       const registro = await this.registraTotalesRepository.find({
-        select: ['nom_proyecto', 'nom_language','num_files','num_blank','num_comment'],
+        select: ['nom_proyecto', 'nom_language','num_files','num_blank','num_comment','num_code'],
         where: { id_proyecto: id }
       });
 

@@ -16,6 +16,8 @@ export class RegistraTotales {
     @Column({type: 'varchar', length:255})
     nom_language: string;
 
+    @Column({type: 'varchar', length:255})
+    num_code: string;
 
     @Column({type: 'varchar', length:255})
     num_files: string;
