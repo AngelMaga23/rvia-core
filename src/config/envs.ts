@@ -31,6 +31,15 @@ interface EnvVars {
   OLD_SECRET_KEY?: string;  // Opcional
   NEW_SECRET_KEY?: string;  // Opcional
 
+  PYTHON_PATH?: string;  // Opcional
+
+  WORKER_SAN_PATH?: string;  // Opcional
+  WORKER_ACT_PATH?: string;  // Opcional
+  WORKER_DIM_PATH?: string;  // Opcional
+  WORKER_DOC_PATH?: string;  // Opcional
+  WORKER_DOF_PATH?: string;  // Opcional
+  WORKER_CAP_PATH?: string;  // Opcional
+
 }
 
 const envsSchema = joi.object({
@@ -57,6 +66,16 @@ const envsSchema = joi.object({
 
   OLD_SECRET_KEY: joi.string().optional(),
   NEW_SECRET_KEY: joi.string().optional(),
+
+  PYTHON_PATH: joi.string().optional(),
+
+  WORKER_SAN_PATH: joi.string().optional(),
+  WORKER_ACT_PATH: joi.string().optional(),
+  WORKER_DIM_PATH: joi.string().optional(),
+  WORKER_DOC_PATH: joi.string().optional(),
+  WORKER_DOF_PATH: joi.string().optional(),
+  WORKER_CAP_PATH: joi.string().optional(),
+
 })
 .unknown(true);
 
@@ -95,5 +114,14 @@ export const envs = {
 
   oldSecretKey: envVars.OLD_SECRET_KEY,
   newSecretKey: envVars.NEW_SECRET_KEY,
+
+  pythonPath: envVars.PYTHON_PATH,
+
+  workerSanPath: envVars.WORKER_SAN_PATH,
+  workerActPath: envVars.WORKER_ACT_PATH,
+  workerDimPath: envVars.WORKER_DIM_PATH,
+  workerDocPath: envVars.WORKER_DOC_PATH,
+  workerDofPath: envVars.WORKER_DOF_PATH,
+  workerCapPath: envVars.WORKER_CAP_PATH,
 
 };

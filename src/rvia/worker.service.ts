@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { envs } from 'src/config';
 import { Worker, WorkerOptions } from 'worker_threads';
 
 interface InitProcessData {
@@ -27,28 +28,27 @@ export class WorkerService {
   }
 
 
-
   runInitSanProcess(args: any[]): Promise<any> {
-    return this.runWorker('./src/rvia/workerProcess/worker-san.js', args);
+    return this.runWorker(path.resolve(__dirname, 'workerProcess', envs.workerSanPath), args);
   }
 
   runInitActProcess(args: any[]): Promise<any> {
-    return this.runWorker('./src/rvia/workerProcess/worker-act.js', args);
+    return this.runWorker(path.resolve(__dirname, 'workerProcess', envs.workerActPath), args);
   }
 
   runInitDimProcess(args: any[]): Promise<any> {
-    return this.runWorker('./src/rvia/workerProcess/worker-dim.js', args);
+    return this.runWorker(path.resolve(__dirname, 'workerProcess', envs.workerDimPath), args);
   }
 
   runInitDocProcess(args: any[]): Promise<any> {
-    return this.runWorker('./src/rvia/workerProcess/worker-doc.js', args);
+    return this.runWorker(path.resolve(__dirname, 'workerProcess', envs.workerDocPath), args);
   }
 
   runInitDofProcess(args: any[]): Promise<any> {
-    return this.runWorker('./src/rvia/workerProcess/worker-dof.js', args);
+    return this.runWorker(path.resolve(__dirname, 'workerProcess', envs.workerDofPath), args);
   }
 
   runInitCapProcess(args: any[]): Promise<any> {
-    return this.runWorker('./src/rvia/workerProcess/worker-cap.js', args);
+    return this.runWorker(path.resolve(__dirname, 'workerProcess', envs.workerCapPath), args);
   }
 }

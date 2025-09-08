@@ -160,7 +160,7 @@ export class CheckmarxService {
 
   async callPython(nameApplication:string, namePdf:string, application: Application){
 
-    const scriptPath = join(__dirname, '../..', 'src/python-scripts','recovery.py');
+    const scriptPath = envs.pythonPath ? path.resolve(process.cwd(), envs.pythonPath) : join(__dirname, '../..', 'src/python-scripts','recovery.py');
 
     const execPromise = promisify(exec);
     const nom_aplicacion = this.encryptionService.decrypt(application.nom_aplicacion);
