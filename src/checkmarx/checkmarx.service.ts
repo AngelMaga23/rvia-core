@@ -8,6 +8,7 @@ import { promisify } from 'util';
 import { exec } from 'child_process';
 import * as fsExtra from 'fs-extra';
 import { promises as fs } from 'fs';
+import * as path from 'path';
 
 import { CreateCheckmarxDto } from './dto/create-checkmarx.dto';
 import { UpdateCheckmarxDto } from './dto/update-checkmarx.dto';

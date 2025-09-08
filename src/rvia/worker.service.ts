@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import * as path from 'path';
 import { envs } from 'src/config';
 import { Worker, WorkerOptions } from 'worker_threads';
 
