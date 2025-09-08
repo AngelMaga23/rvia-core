@@ -928,6 +928,9 @@ export class ApplicationsService {
         'registraTotales.id_proyecto = application.idu_proyecto'
       )
       .select('SUM(registraTotales.num_files)', 'totalFiles')
+      .addSelect('SUM(registraTotales.num_blank)', 'totalBlank')
+      .addSelect('SUM(registraTotales.num_comment)', 'totalComment')
+      .addSelect('SUM(registraTotales.num_code)', 'totalCode')
       .where('application.idu_proyecto = :id_proyecto', { id_proyecto:id })
       .getRawOne();
 
@@ -937,6 +940,9 @@ export class ApplicationsService {
         "aplicacion":application, 
         "archivos":registro,
         "total_consultas": total_consultas ? Number(total_consultas.totalFiles) : 0,
+        "total_blank": total_consultas ? Number(total_consultas.totalBlank) : 0,
+        "total_comment": total_consultas ? Number(total_consultas.totalComment) : 0,
+        "total_code": total_consultas ? Number(total_consultas.totalCode) : 0,
         "costo_token": {
           "costo_token": costo_token ? Number(costo_token.costoPorConsulta) : 0,
           "costo_token_extra": costo_token ? Number(costo_token.costoPorConsultaExtra) : 0,
