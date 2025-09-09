@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 import * as joi from 'joi';
 
 dotenv.config({
-  path: '/sysx/dev/rvia/cnf/dev.ini',  // Ajusta la ruta según tu estructura
+  path: '/sysx/progs/rvia/cnf/prod.ini',  // Ajusta la ruta según tu estructura
 }); 
 
 interface EnvVars {
